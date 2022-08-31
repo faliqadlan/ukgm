@@ -3,8 +3,8 @@ package aggregatebuilder_test
 import (
 	"testing"
 
-	"github.com/faliqadlan/ukgm/internal/app/ukgm/model/request"
-	aggregatebuilder "github.com/faliqadlan/ukgm/internal/app/ukgm/mongoRepository/aggregateBuilder"
+	"ukgm/internal/app/ukgm/model/request"
+	aggregatebuilder "ukgm/internal/app/ukgm/mongoRepository/aggregateBuilder"
 )
 
 func TestAggregationMatchToBSON(t *testing.T) {

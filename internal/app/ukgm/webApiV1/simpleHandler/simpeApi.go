@@ -1,7 +1,8 @@
 package simple
 
 import (
-	"github.com/faliqadlan/ukgm/internal/app/ukgm/service"
+	"ukgm/internal/app/ukgm/service"
+
 	"github.com/go-chi/chi"
 )
 

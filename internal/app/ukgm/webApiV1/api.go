@@ -1,8 +1,9 @@
 package webapiv1
 
 import (
-	"github.com/faliqadlan/ukgm/internal/app/ukgm/service"
-	simple "github.com/faliqadlan/ukgm/internal/app/ukgm/webApiV1/simpleHandler"
+	"ukgm/internal/app/ukgm/service"
+	simple "ukgm/internal/app/ukgm/webApiV1/simpleHandler"
+
 	"github.com/go-chi/chi"
 )
 

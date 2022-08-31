@@ -2,7 +2,7 @@ package aggregatebuilder
 
 import (
 	"fmt"
-	"github.com/faliqadlan/ukgm/internal/app/ukgm/model/request"
+	"ukgm/internal/app/ukgm/model/request"
 
 	"go.mongodb.org/mongo-driver/bson"
 )

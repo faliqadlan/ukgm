@@ -3,7 +3,8 @@ package mongorepository
 import (
 	"context"
 
-	basicMongo "github.com/faliqadlan/ukgm/internal/app/ukgm/mongoRepository/basicFunction"
+	basicMongo "ukgm/internal/app/ukgm/mongoRepository/basicFunction"
+
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"

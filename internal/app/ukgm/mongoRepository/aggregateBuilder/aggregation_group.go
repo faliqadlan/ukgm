@@ -3,7 +3,7 @@ package aggregatebuilder
 import (
 	"fmt"
 
-	constants "github.com/faliqadlan/ukgm/internal/app/ukgm/constant"
+	constants "ukgm/internal/app/ukgm/constant"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.uber.org/zap"

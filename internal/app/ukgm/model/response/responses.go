@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/faliqadlan/ukgm/internal/app/config/env"
+	"ukgm/internal/app/config/env"
 )
 
 /*

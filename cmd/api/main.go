@@ -7,12 +7,13 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/faliqadlan/ukgm/internal/app/config/env"
-	"github.com/faliqadlan/ukgm/internal/app/ukgm/model/request"
-	"github.com/faliqadlan/ukgm/internal/app/ukgm/service"
-	webapiv1 "github.com/faliqadlan/ukgm/internal/app/ukgm/webApiV1"
-	simple "github.com/faliqadlan/ukgm/internal/app/ukgm/webApiV1/simpleHandler"
-	"github.com/faliqadlan/ukgm/internal/pkg/server"
+	"ukgm/internal/app/config/env"
+	"ukgm/internal/app/ukgm/model/request"
+	"ukgm/internal/app/ukgm/service"
+	webapiv1 "ukgm/internal/app/ukgm/webApiV1"
+	simple "ukgm/internal/app/ukgm/webApiV1/simpleHandler"
+	"ukgm/internal/pkg/server"
+
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
 )

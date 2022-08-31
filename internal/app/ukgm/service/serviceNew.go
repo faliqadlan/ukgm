@@ -5,8 +5,9 @@ import (
 	"log"
 	"net/url"
 
-	"github.com/faliqadlan/ukgm/internal/app/config/env"
-	mongorepository "github.com/faliqadlan/ukgm/internal/app/ukgm/mongoRepository"
+	"ukgm/internal/app/config/env"
+	mongorepository "ukgm/internal/app/ukgm/mongoRepository"
+
 	"go.uber.org/zap"
 )
 

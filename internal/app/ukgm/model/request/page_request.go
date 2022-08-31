@@ -8,9 +8,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/faliqadlan/ukgm/internal/app/utils"
+	"ukgm/internal/app/utils"
 
-	responses "github.com/faliqadlan/ukgm/internal/app/ukgm/model/response"
+	responses "ukgm/internal/app/ukgm/model/response"
 
 	"go.uber.org/zap"
 
