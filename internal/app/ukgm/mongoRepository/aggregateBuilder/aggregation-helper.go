@@ -65,7 +65,7 @@ func (aggregate *AggregationHelper) ToBSON() (result bson.A) {
 // func (aggregate *AggregationRequest) Validate() (err error) {
 // 	if len(aggregate.AggregateMember) == 0 {
 // 		err = fmt.Errorf("Request is invalid")
-// 		zap.S().Error(err)
+//
 // 	}
 // 	return
 // }

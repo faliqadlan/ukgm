@@ -8,7 +8,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
-	"go.uber.org/zap"
 )
 
 // MongoRepo implements facultative.Repository using MongoDB
@@ -23,13 +22,13 @@ type MongoRepo struct {
 func NewMongoRepo(url, dbName string) (*MongoRepo, error) {
 	client, err := mongo.Connect(context.Background(), options.Client().ApplyURI(url))
 	if err != nil {
-		zap.S().Error(err)
+
 		return nil, err
 	}
 
 	err = client.Ping(context.Background(), readpref.Primary())
 	if err != nil {
-		zap.S().Error(err)
+
 		return nil, err
 	}
 
