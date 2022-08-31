@@ -12,11 +12,10 @@ import (
 
 	responses "ukgm/internal/app/ukgm/model/response"
 
-	"go.uber.org/zap"
-
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.uber.org/zap"
 )
 
 type PageRequest struct {
@@ -380,7 +379,7 @@ func (pr *PageRequest) ToResponsePR() (result *responses.PageRequest, err error)
 	temp, errTemp := json.Marshal(pr)
 	if err != nil {
 		err = errTemp
-		zap.S().Error(err)
+		zap.S().Error()
 		return
 	}
 	json.Unmarshal(temp, &result)

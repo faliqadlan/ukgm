@@ -2,11 +2,12 @@ package service
 
 import (
 	"fmt"
-	"log"
 	"net/url"
 
 	"ukgm/internal/app/config/env"
 	mongorepository "ukgm/internal/app/ukgm/mongoRepository"
+
+	"go.uber.org/zap"
 )
 
 type ServiceNew struct {
@@ -16,7 +17,7 @@ type ServiceNew struct {
 func ServiceNewDeclare() (result *ServiceNew, err error) {
 	repo, err := MongoDeclare()
 	if err != nil {
-
+		zap.S().Error(err)
 		return
 	}
 
@@ -36,9 +37,8 @@ func MongoDeclare() (repo *mongorepository.MongoRepo, err error) {
 	dbURL := fmt.Sprintf("mongodb+srv://%s:%s@%s/%s", dbUsername, url.QueryEscape(dbPassword), dbHost, dbPort)
 	repo, err = mongorepository.NewMongoRepo(dbURL, dbName)
 	if err != nil {
-
+		zap.S().Error(err)
 		return
 	}
-	log.Println(dbURL)
 	return
 }

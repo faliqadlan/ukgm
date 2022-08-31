@@ -30,7 +30,7 @@ type (
 func (accumulator *AggregationAccumulator) ValidateType() (err error) {
 	if accumulator.Type == "" || !constants.ValidateAggregationAccumulatorType(accumulator.Type) {
 		err = fmt.Errorf("Type is invalid")
-		zap.S().Error(err)
+		zap.S().Error()
 	}
 	return
 }
@@ -38,7 +38,7 @@ func (accumulator *AggregationAccumulator) ValidateType() (err error) {
 func (accumulator *AggregationAccumulator) ValidateField() (err error) {
 	if accumulator.DBField == "" || accumulator.Field == "" {
 		err = fmt.Errorf("Field is invalid")
-		zap.S().Error(err)
+		zap.S().Error()
 	}
 	return
 }
@@ -46,12 +46,12 @@ func (accumulator *AggregationAccumulator) ValidateField() (err error) {
 func (accumulator *AggregationAccumulator) Validate() (err error) {
 	err = accumulator.ValidateField()
 	if err != nil {
-		zap.S().Error(err)
+		zap.S().Error()
 		return
 	}
 	err = accumulator.ValidateType()
 	if err != nil {
-		zap.S().Error(err)
+		zap.S().Error()
 		return
 	}
 	return
@@ -74,7 +74,7 @@ func (accumulator *AggregationAccumulator) ToBSON() (result bson.E) {
 func (groupID *GroupID) Validate() (err error) {
 	if groupID.DestinationField == "" || groupID.SourceField == "" {
 		err = fmt.Errorf("Field is invalid")
-		zap.S().Error(err)
+		zap.S().Error()
 	}
 	return
 }

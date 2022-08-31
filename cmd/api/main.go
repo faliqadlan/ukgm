@@ -35,7 +35,7 @@ func main() {
 
 	newService, err := service.ServiceNewDeclare()
 	if err != nil {
-		log.Fatal(err)
+		log.Panic(err)
 	}
 
 	newSimpleApi := simple.NewSimpleApi(newService)

@@ -15,5 +15,5 @@ func NewSimpleApi(srv *service.ServiceNew) *SimpleApi {
 }
 
 func (api SimpleApi) Init(r chi.Router) {
-	r.Get("/simpeHello", api.simpleHello)
+	r.Get("/simpleHello", api.simpleHello)
 }
