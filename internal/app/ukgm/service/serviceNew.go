@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"log"
 	"net/url"
 
 	"github.com/faliqadlan/ukgm/internal/app/config/env"
@@ -33,11 +34,12 @@ func MongoDeclare() (repo *mongorepository.MongoRepo, err error) {
 	dbHost := env.Get("DB_HOST")
 	dbPort := env.Get("DB_PORT")
 	dbName := env.Get("DB_DATABASE")
-	dbURL := fmt.Sprintf("mongodb://%s:%s@%s:%s", dbUsername, url.QueryEscape(dbPassword), dbHost, dbPort)
+	dbURL := fmt.Sprintf("mongodb+srv://%s:%s@%s/%s", dbUsername, url.QueryEscape(dbPassword), dbHost, dbPort)
 	repo, err = mongorepository.NewMongoRepo(dbURL, dbName)
 	if err != nil {
 		zap.S().Error(err)
 		return
 	}
+	log.Println(dbURL)
 	return
 }

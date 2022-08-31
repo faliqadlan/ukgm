@@ -11,6 +11,7 @@ import (
 	"github.com/faliqadlan/ukgm/internal/app/ukgm/model/request"
 	"github.com/faliqadlan/ukgm/internal/app/ukgm/service"
 	webapiv1 "github.com/faliqadlan/ukgm/internal/app/ukgm/webApiV1"
+	simple "github.com/faliqadlan/ukgm/internal/app/ukgm/webApiV1/simpleHandler"
 	"github.com/faliqadlan/ukgm/internal/pkg/server"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
@@ -36,7 +37,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	newApi := webapiv1.NewApi(newService)
+	newSimpleApi := simple.NewSimpleApi(newService)
+
+	newApi := webapiv1.NewApi(newService, newSimpleApi)
 	r.Route("/api/v1/", newApi.Init)
 
 	appHost := env.Get("APP_HOST")
