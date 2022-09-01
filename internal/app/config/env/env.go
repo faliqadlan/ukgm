@@ -10,7 +10,6 @@ import (
 func Get(name string) string {
 
 	val := os.Getenv(name)
-	log.Println(name, val)
 	if val == "" {
 		return getFromFile(name)
 	}
