@@ -43,7 +43,7 @@ func main() {
 	newApi := webapiv1.NewApi(newService, newSimpleApi)
 	r.Route("/api/v1/", newApi.Init)
 
-	appHost := env.Get("APP_HOST")
+	appHost := env.Get("PORT")
 	log.Println("Running at : ", appHost)
 
 	/*
