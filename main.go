@@ -45,6 +45,7 @@ func main() {
 
 	appHost := env.Get("PORT")
 	log.Println("Running at : ", appHost)
+	appHost = ":" + appHost
 
 	/*
 		Gracefully stop application
