@@ -11,4 +11,5 @@ require (
 	github.com/joho/godotenv v1.4.0
 	go.mongodb.org/mongo-driver v1.10.1
 	go.uber.org/zap v1.20.0
+	gorm.io/gorm v1.23.8
 )
