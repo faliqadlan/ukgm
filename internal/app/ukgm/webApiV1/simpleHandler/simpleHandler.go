@@ -17,6 +17,7 @@ func (SimpeApi *SimpleApi) simpleHello(w http.ResponseWriter, r *http.Request) {
 		err := errors.New("bad request")
 		zap.S().Error(err)
 		responses.SendErrorJSON(responses.PrintErrorMessage(err), w)
+		return
 	}
 
 	responses.SendJSON(responses.NewResponse("Welcome to the simpleHello"), w)
