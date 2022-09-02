@@ -16,6 +16,9 @@ type Diagnose struct {
 	Condition   string      `json:"condition" bson:"condition"`
 	DoctorName  string      `json:"doctor_name" bson:"doctor_name"`
 	NurseName   string      `json:"nurse_name" bson:"nurse_name"`
+
+	// include
+	Timestamp
 }
 
 type KarangGigi struct {
