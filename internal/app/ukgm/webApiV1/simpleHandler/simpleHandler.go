@@ -1,7 +1,23 @@
 package simple
 
-import "net/http"
+import (
+	"errors"
+	"net/http"
+	responses "ukgm/internal/app/ukgm/model/response"
+
+	"go.uber.org/zap"
+)
 
 func (SimpeApi *SimpleApi) simpleHello(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Hello, world!"))
+
+	query := r.URL.Query()
+	errorTest := query.Get("error")
+
+	if errorTest == "true" {
+		err := errors.New("bad request")
+		zap.S().Error(err)
+		responses.SendErrorJSON(responses.PrintErrorMessage(err), w)
+	}
+
+	responses.SendJSON(responses.NewResponse("Welcome to the simpleHello"), w)
 }
