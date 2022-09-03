@@ -1,11 +1,13 @@
 package entities
 
+import "firebase.google.com/go/auth"
+
 // type AuthUser struct {
 // 	ID   string `json:"id" bson:"id,omitempty"`
 // 	Name string `json:"name" bson:"name"`
 // }
 
-// type Auth struct {
-// 	Token string `json:"token"`
-// 	Auth AuthUser
-// }
+type Auth struct {
+	Token    string `json:"token"`
+	AuthUser *auth.Token
+}

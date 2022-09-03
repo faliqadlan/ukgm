@@ -9,6 +9,7 @@ import (
 
 	"ukgm/internal/app/config"
 	"ukgm/internal/app/config/env"
+	firebase_api "ukgm/internal/app/config/firebase"
 	"ukgm/internal/app/ukgm/model/request"
 	"ukgm/internal/app/ukgm/service"
 	webapiv1 "ukgm/internal/app/ukgm/webApiV1"
@@ -35,9 +36,13 @@ func main() {
 		AllowCredentials: true,
 	})
 
+	firebaseApi := firebase_api.NewFirebaseApi()
+
+	middlewareSrv := request.NewMiddleware(firebaseApi)
+
 	r.Use(cors.Handler)
-	r.Use(request.CommonMiddleware)
-	r.Use(request.JWTMiddleware)
+	r.Use(middlewareSrv.CommonMiddleware)
+	r.Use(middlewareSrv.JWTMiddleware)
 
 	newService, err := service.ServiceNewDeclare()
 	if err != nil {

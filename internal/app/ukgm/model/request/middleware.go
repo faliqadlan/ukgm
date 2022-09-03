@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strings"
 
-	"ukgm/internal/app/config/env"
 	firebase_api "ukgm/internal/app/config/firebase"
 	responses "ukgm/internal/app/ukgm/model/response"
 
@@ -19,16 +18,26 @@ import (
 |--------------------------------------------------------------------------
 |
 */
-func CommonMiddleware(next http.Handler) http.Handler {
+
+type Middleware struct {
+	FirebaseApi *firebase_api.FirebaseApi
+}
+
+func NewMiddleware(firebaseApi *firebase_api.FirebaseApi) *Middleware {
+	return &Middleware{
+		FirebaseApi: firebaseApi,
+	}
+}
+
+func (m *Middleware) CommonMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Content-Type", "application/json")
 		next.ServeHTTP(w, r)
 	})
 }
 
-func JWTMiddleware(next http.Handler) http.Handler {
+func (m *Middleware) JWTMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		firebaseApp := firebase_api.SetupFirebase()
 
 		token := r.Header.Get("Authorization")
 		splitToken := strings.Split(token, "Bearer ")
@@ -43,16 +52,16 @@ func JWTMiddleware(next http.Handler) http.Handler {
 			token = splitToken[1]
 		}
 
-		tokenID, err := firebase_api.SignInWithCustomToken(token, env.Get("WEB_API_KEY"))
+		tokenID, err := m.FirebaseApi.SignInWithCustomToken(token)
 		if err != nil {
 			zap.S().Error(err)
-			responses.SendErrorJSON(responses.PrintErrorMessage(err), w)
+			responses.SendErrorJSON(responses.PrintErrorMessage(errors.New("token is invalid")), w)
 		}
 
-		authToken, err := firebase_api.EncodeToken(firebaseApp, tokenID)
+		authToken, err := m.FirebaseApi.EncodeToken(tokenID)
 		if err != nil {
 			zap.S().Error(err)
-			responses.SendErrorJSON(responses.PrintErrorMessage(err), w)
+			responses.SendErrorJSON(responses.PrintErrorMessage(errors.New("token is invalid")), w)
 		}
 
 		ctx := context.WithValue(r.Context(), GetAuthCtxKey(), authToken)
