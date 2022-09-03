@@ -26,4 +26,5 @@ go.work
 
 #other
 cmd/console
-internal\pkg\token
+
+internal/pkg/token

@@ -31,7 +31,8 @@ func main() {
 	})
 
 	r.Use(cors.Handler)
-	r.Use(request.CommonMiddleware)
+	// r.Use(request.CommonMiddleware)
+	r.Use(request.JWTMiddleware)
 
 	newService, err := service.ServiceNewDeclare()
 	if err != nil {
