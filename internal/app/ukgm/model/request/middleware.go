@@ -9,7 +9,6 @@ import (
 	"log"
 	"net/http"
 	"strings"
-	"time"
 	firebase_api "ukgm/internal/app/config/firebase"
 	"ukgm/internal/app/ukgm/model/entities"
 	responses "ukgm/internal/app/ukgm/model/response"
@@ -29,7 +28,7 @@ func GetPubPicKey() (pubKey *rsa.PublicKey, privKey *rsa.PrivateKey) {
 
 	privKeyS := firebase_api.GetPrivateKey(firebase_api.CredPath, cred)
 
-	blockPriv, _ := pem.Decode([]byte(privKeyS))
+	blockPriv, _ := pem.Decode([]byte(privKeyS.PrivateKey))
 	if blockPriv == nil {
 		panic("failed to parse PEM block containing the public key")
 	}
@@ -51,22 +50,22 @@ func GetPubPicKey() (pubKey *rsa.PublicKey, privKey *rsa.PrivateKey) {
 	}
 
 	// ParsePKIXPublicKey
-	enc := x509.IsEncryptedPEMBlock(block)
-	b := block.Bytes
-	if enc {
-		log.Println("is encrypted pem block")
-		b, err = x509.DecryptPEMBlock(block, nil)
-		if err != nil {
-			log.Println(err)
-		}
-	}
+	// enc := x509.IsEncryptedPEMBlock(block)
+	// b := block.Bytes
+	// if enc {
+	// 	log.Println("is encrypted pem block")
+	// 	b, err = x509.DecryptPEMBlock(block, nil)
+	// 	if err != nil {
+	// 		log.Println(err)
+	// 	}
+	// }
 
-	pubRes, err := x509.ParsePKIXPublicKey(b)
-	if err != nil {
-		panic("failed to parse DER encoded public key: " + err.Error())
-	}
+	// pubRes, err := x509.ParsePKIXPublicKey(b)
+	// if err != nil {
+	// 	panic("failed to parse DER encoded public key: " + err.Error())
+	// }
 
-	pubKey = pubRes.(*rsa.PublicKey)
+	// pubKey = pubRes.(*rsa.PublicKey)
 
 	return pubKey, privKey
 }
@@ -86,7 +85,7 @@ func CommonMiddleware(next http.Handler) http.Handler {
 
 func JWTMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		now := time.Now()
+		// now := time.Now()
 		token := r.Header.Get("Authorization")
 		splitToken := strings.Split(token, "Bearer ")
 		if len(token) <= 0 {
@@ -100,19 +99,19 @@ func JWTMiddleware(next http.Handler) http.Handler {
 			token = splitToken[1]
 		}
 
-		pubKey, _ := GetPubPicKey()
+		// pubKey, _ := GetPubPicKey()
 
-		hs256 := jwt.NewRS256(&rsa.PrivateKey{}, pubKey)
+		// hs256 := jwt.NewRS256(&rsa.PrivateKey{}, pubKey)
 
-		payload, sig, err := jwt.Parse(token)
+		payload, _, err := jwt.Parse(token)
 		if err != nil {
 			responses.SendErrorJSON(responses.PrintErrorMessage(errors.New("400-Token-Parse")), w)
 			return
 		}
-		if err = hs256.Verify(payload, sig); err != nil {
-			responses.SendErrorJSON(responses.PrintErrorMessage(errors.New("400-Signature")), w)
-			return
-		}
+		// if err = hs256.Verify(payload, sig); err != nil {
+		// 	responses.SendErrorJSON(responses.PrintErrorMessage(errors.New("400-Signature")), w)
+		// 	return
+		// }
 		var jot Token
 		if err = jwt.Unmarshal(payload, &jot); err != nil {
 			responses.SendErrorJSON(responses.PrintErrorMessage(errors.New("400-Token-Parse")), w)
@@ -125,19 +124,19 @@ func JWTMiddleware(next http.Handler) http.Handler {
 		}
 
 		// Validate fields.
-		iatValidator := jwt.IssuedAtValidator(now)
-		expValidator := jwt.ExpirationTimeValidator(now)
-		audValidator := jwt.AudienceValidator("admin")
-		if err = jot.Validate(iatValidator, expValidator, audValidator); err != nil {
-			switch err {
-			case jwt.ErrIatValidation:
-				responses.SendErrorJSON(responses.PrintErrorMessage(errors.New("400-Signature")), w)
-				return
-			case jwt.ErrExpValidation:
-				responses.SendErrorJSON(responses.PrintErrorMessage(errors.New("401-Expired")), w)
-				return
-			}
-		}
+		// iatValidator := jwt.IssuedAtValidator(now)
+		// expValidator := jwt.ExpirationTimeValidator(now)
+		// audValidator := jwt.AudienceValidator("admin")
+		// if err = jot.Validate(iatValidator, expValidator, audValidator); err != nil {
+		// 	switch err {
+		// 	case jwt.ErrIatValidation:
+		// 		responses.SendErrorJSON(responses.PrintErrorMessage(errors.New("400-Signature")), w)
+		// 		return
+		// 	case jwt.ErrExpValidation:
+		// 		responses.SendErrorJSON(responses.PrintErrorMessage(errors.New("401-Expired")), w)
+		// 		return
+		// 	}
+		// }
 
 		log.Println(auth)
 

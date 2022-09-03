@@ -1,9 +1,13 @@
 package firebase_api
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
 	"path/filepath"
 
@@ -15,27 +19,31 @@ import (
 const (
 	CredPath   = "./internal/pkg/token/firebase/ukgm-f77a7-firebase-adminsdk-s2wqn-9226607831.json"
 	PubKeyPath = "./internal/pkg/token/other/pubKey.json"
+
+	verifyCustomTokenURL = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyCustomToken?key=%s"
+	verifyPasswordURL    = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=%s"
 )
 
 type Credential struct {
-	PrivateKey string `json:"private_key"`
+	PrivateKeyID string `json:"private_key_id"`
+	PrivateKey   string `json:"private_key"`
 }
 
 type PublicKey struct {
 	PubKey string `json:"ed6bc9da1af236f8ea56a5d6223401ff4e087f11"`
 }
 
-func GetPrivateKey(path string, c *Credential) string {
+func GetPrivateKey(path string, c *Credential) *Credential {
 	configFile, err := os.Open(path)
 	if err != nil {
-		return err.Error()
+		log.Println(err)
 	}
 
 	jsonParser := json.NewDecoder(configFile)
 	if err = jsonParser.Decode(&c); err != nil {
-		return err.Error()
+		log.Println(err)
 	}
-	return c.PrivateKey
+	return c
 }
 
 func GetPublicKey(path string, p *PublicKey) string {
@@ -115,4 +123,43 @@ func EncodeToken(app *firebase.App, token string) *auth.Token {
 	log.Printf("Verified ID token: %v\n", authTok)
 
 	return authTok
+}
+
+func SignInWithCustomToken(token string, privateKeyID string) (string, error) {
+	req, err := json.Marshal(map[string]interface{}{
+		"token":             token,
+		"returnSecureToken": true,
+	})
+	if err != nil {
+		return "", err
+	}
+
+	// apiKey, err := internal.APIKey()
+	// if err != nil {
+	// 	return "", err
+	// }
+	resp, err := postRequest(fmt.Sprintf(verifyCustomTokenURL, privateKeyID), req)
+	if err != nil {
+		return "", err
+	}
+	var respBody struct {
+		IDToken string `json:"idToken"`
+	}
+	if err := json.Unmarshal(resp, &respBody); err != nil {
+		return "", err
+	}
+	return respBody.IDToken, err
+}
+
+func postRequest(url string, req []byte) ([]byte, error) {
+	resp, err := http.Post(url, "application/json", bytes.NewBuffer(req))
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("unexpected http status code: %d", resp.StatusCode)
+	}
+	return ioutil.ReadAll(resp.Body)
 }

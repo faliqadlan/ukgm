@@ -6,6 +6,7 @@ require (
 	cloud.google.com/go/firestore v1.6.1 // indirect
 	cloud.google.com/go/storage v1.26.0 // indirect
 	firebase.google.com/go v3.13.0+incompatible
+	github.com/dvsekhvalnov/jose2go v1.5.0
 	github.com/gbrlsnchs/jwt v1.1.0
 	github.com/gbrlsnchs/jwt/v2 v2.0.0
 	github.com/go-chi/chi v1.5.4
