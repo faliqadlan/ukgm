@@ -7,7 +7,9 @@ import (
 	"os/signal"
 	"syscall"
 
+	"ukgm/internal/app/config"
 	"ukgm/internal/app/config/env"
+	"ukgm/internal/app/ukgm/model/request"
 	"ukgm/internal/app/ukgm/service"
 	webapiv1 "ukgm/internal/app/ukgm/webApiV1"
 	simple "ukgm/internal/app/ukgm/webApiV1/simpleHandler"
@@ -16,6 +18,10 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
 )
+
+func init() {
+	config.SetupLogger()
+}
 
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
@@ -30,7 +36,8 @@ func main() {
 	})
 
 	r.Use(cors.Handler)
-	// r.Use(request.CommonMiddleware)
+	r.Use(request.CommonMiddleware)
+	r.Use(request.JWTMiddleware)
 
 	newService, err := service.ServiceNewDeclare()
 	if err != nil {

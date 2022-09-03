@@ -5,6 +5,7 @@ import (
 	mongorepository "ukgm/internal/app/ukgm/mongoRepository"
 	doctor_repo "ukgm/internal/app/ukgm/mongoRepository/doctorRepo"
 
+	"firebase.google.com/go/auth"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -22,7 +23,7 @@ func New(Repo *mongorepository.MongoRepo) (result *DoctorService) {
 	return
 }
 
-func (doctor *DoctorService) StoreDoctor(data *entities.Doctor, auth *entities.AuthUser) (result *entities.Doctor, err error) {
+func (doctor *DoctorService) StoreDoctor(data *entities.Doctor, auth *auth.Token) (result *entities.Doctor, err error) {
 	data.Timestamp.CreateNew(auth)
 	return doctor.Repo.StoreDoctor(data)
 }

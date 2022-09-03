@@ -295,7 +295,7 @@ func BuildSearchFilter(search string, fields []string) (filters []bson.D) {
 	for _, field := range fields {
 		// INIT FILTER
 		filter = bson.D{
-			{field, primitive.Regex{Pattern: search, Options: "i"}}}
+			{Key: field, Value: primitive.Regex{Pattern: search, Options: "i"}}}
 		filters = append(filters, filter)
 	}
 

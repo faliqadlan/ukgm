@@ -4,12 +4,17 @@ import (
 	"encoding/json"
 	"net/http"
 	"ukgm/internal/app/ukgm/model/entities"
+	"ukgm/internal/app/ukgm/model/request"
 	responses "ukgm/internal/app/ukgm/model/response"
 
+	"firebase.google.com/go/auth"
 	"go.uber.org/zap"
 )
 
 func (doctor *DoctorApi) StoreDoctor(w http.ResponseWriter, r *http.Request) {
+
+	// GET DATA CONTEXT MIDDLEWARE
+	auth := r.Context().Value(request.GetAuthCtxKey()).(*auth.Token)
 
 	var mainRequest *entities.Doctor
 
@@ -22,10 +27,7 @@ func (doctor *DoctorApi) StoreDoctor(w http.ResponseWriter, r *http.Request) {
 
 	mainRequest.DistrictID = districtId
 
-	res, err := doctor.srv.PrepareStoreDoctor(mainRequest, &entities.AuthUser{
-		ID:   "123123",
-		Name: "test input",
-	})
+	res, err := doctor.srv.PrepareStoreDoctor(mainRequest, auth)
 
 	if err != nil {
 		zap.S().Error(err)

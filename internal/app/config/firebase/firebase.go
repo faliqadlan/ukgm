@@ -12,6 +12,7 @@ import (
 
 	firebase "firebase.google.com/go"
 	"firebase.google.com/go/auth"
+	"go.uber.org/zap"
 	"google.golang.org/api/option"
 )
 
@@ -52,7 +53,7 @@ func AuthenticationID(app *firebase.App, uid string) *auth.UserRecord {
 	if err != nil {
 		log.Fatalf("error getting user %s: %v\n", uid, err)
 	}
-	log.Printf("Successfully fetched user data: %v\n", u)
+	// log.Printf("Successfully fetched user data: %v\n", u)
 
 	return u
 }
@@ -68,25 +69,27 @@ func GenerateToken(app *firebase.App, uid string) string {
 		log.Fatalf("error minting custom token: %v\n", err)
 	}
 
-	log.Printf("Got custom token: %v\n", token)
+	// log.Printf("Got custom token: %v\n", token)
 
 	return token
 }
 
-func EncodeToken(app *firebase.App, token string) *auth.Token {
+func EncodeToken(app *firebase.App, token string) (auth *auth.Token, err error) {
 	client, err := app.Auth(context.Background())
 	if err != nil {
-		log.Fatalf("error getting Auth client: %v\n", err)
+		zap.S().Error(err)
+		return nil, fmt.Errorf("error getting auth client: %v", err)
 	}
 
 	authTok, err := client.VerifyIDToken(context.Background(), token)
 	if err != nil {
-		log.Fatalf("error verifying ID token: %v\n", err)
+		zap.S().Error(err)
+		return nil, fmt.Errorf("error verifying ID token: %v", err)
 	}
 
-	log.Printf("Verified ID token: %v\n", authTok)
+	// log.Printf("Verified ID token: %v\n", authTok)
 
-	return authTok
+	return authTok, nil
 }
 
 func SignInWithCustomToken(token string, privateKeyID string) (string, error) {
@@ -104,12 +107,14 @@ func SignInWithCustomToken(token string, privateKeyID string) (string, error) {
 	// }
 	resp, err := postRequest(fmt.Sprintf(verifyCustomTokenURL, privateKeyID), req)
 	if err != nil {
+		zap.S().Error(err)
 		return "", err
 	}
 	var respBody struct {
 		IDToken string `json:"idToken"`
 	}
 	if err := json.Unmarshal(resp, &respBody); err != nil {
+		zap.S().Error(err)
 		return "", err
 	}
 	return respBody.IDToken, err
@@ -123,6 +128,7 @@ func postRequest(url string, req []byte) ([]byte, error) {
 
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
+		zap.S().Error(err)
 		return nil, fmt.Errorf("unexpected http status code: %d", resp.StatusCode)
 	}
 	return ioutil.ReadAll(resp.Body)
