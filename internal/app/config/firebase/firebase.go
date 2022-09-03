@@ -8,7 +8,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 	"path/filepath"
 
 	firebase "firebase.google.com/go"
@@ -23,41 +22,6 @@ const (
 	verifyCustomTokenURL = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyCustomToken?key=%s"
 	verifyPasswordURL    = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=%s"
 )
-
-type Credential struct {
-	PrivateKeyID string `json:"private_key_id"`
-	PrivateKey   string `json:"private_key"`
-}
-
-type PublicKey struct {
-	PubKey string `json:"ed6bc9da1af236f8ea56a5d6223401ff4e087f11"`
-}
-
-func GetPrivateKey(path string, c *Credential) *Credential {
-	configFile, err := os.Open(path)
-	if err != nil {
-		log.Println(err)
-	}
-
-	jsonParser := json.NewDecoder(configFile)
-	if err = jsonParser.Decode(&c); err != nil {
-		log.Println(err)
-	}
-	return c
-}
-
-func GetPublicKey(path string, p *PublicKey) string {
-	configFile, err := os.Open(path)
-	if err != nil {
-		return err.Error()
-	}
-
-	jsonParser := json.NewDecoder(configFile)
-	if err = jsonParser.Decode(&p); err != nil {
-		return err.Error()
-	}
-	return p.PubKey
-}
 
 func SetupFirebase() *firebase.App {
 

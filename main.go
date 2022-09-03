@@ -8,7 +8,6 @@ import (
 	"syscall"
 
 	"ukgm/internal/app/config/env"
-	"ukgm/internal/app/ukgm/model/request"
 	"ukgm/internal/app/ukgm/service"
 	webapiv1 "ukgm/internal/app/ukgm/webApiV1"
 	simple "ukgm/internal/app/ukgm/webApiV1/simpleHandler"
@@ -32,7 +31,6 @@ func main() {
 
 	r.Use(cors.Handler)
 	// r.Use(request.CommonMiddleware)
-	r.Use(request.JWTMiddleware)
 
 	newService, err := service.ServiceNewDeclare()
 	if err != nil {
