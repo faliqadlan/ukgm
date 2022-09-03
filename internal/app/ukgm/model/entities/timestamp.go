@@ -28,7 +28,7 @@ func (timeRange *TimeRange) Validate() error {
 
 func (timestamp *Timestamp) CreateNew(auth *AuthUser) {
 	location, _ := time.LoadLocation("Asia/Jakarta")
-	now := time.Now().In(location)
+	now := time.Now().In(location).Local()
 	timestamp.CreatedAt = &now
 	timestamp.UpdatedAt = &now
 	timestamp.CreatedBy = *auth
@@ -37,14 +37,14 @@ func (timestamp *Timestamp) CreateNew(auth *AuthUser) {
 
 func (timestamp *Timestamp) Update(auth *AuthUser) {
 	location, _ := time.LoadLocation("Asia/Jakarta")
-	now := time.Now().In(location)
+	now := time.Now().In(location).Local()
 	timestamp.UpdatedAt = &now
 	timestamp.UpdatedBy = *auth
 }
 
 func (timestamp *Timestamp) Delete(auth *AuthUser) {
 	location, _ := time.LoadLocation("Asia/Jakarta")
-	now := time.Now().In(location)
+	now := time.Now().In(location).Local()
 	timestamp.DeletedAt = &now
 	timestamp.DeletedBy = *auth
 }

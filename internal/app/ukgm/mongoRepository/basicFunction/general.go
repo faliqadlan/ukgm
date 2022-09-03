@@ -73,9 +73,7 @@ func (r *Repo) Show(ctx context.Context, cname string, filter bson.M, option *op
 
 func (r *Repo) Store(ctx context.Context, cname string, data interface{}, options *options.InsertOneOptions) (result *mongo.InsertOneResult, err error) {
 	collection := r.db.Collection(cname)
-
 	result, err = collection.InsertOne(ctx, data, options)
-
 	return
 }
 
@@ -103,5 +101,12 @@ func (r *Repo) DeleteMany(ctx context.Context, cname string, filter bson.M, opti
 
 	result, err = collection.DeleteMany(ctx, filter, option)
 
+	return
+}
+
+func (r *Repo) Delete(ctx context.Context, cname string, filter bson.M, data interface{}, options *options.DeleteOptions) (result *mongo.DeleteResult, err error) {
+	var collection = r.db.Collection(cname)
+
+	result, err = collection.DeleteOne(ctx, data, options)
 	return
 }
