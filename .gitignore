@@ -23,3 +23,8 @@ go.work
 
 # ignore editor settings
 *.vscode
+
+#other
+cmd/console
+
+internal/pkg/token

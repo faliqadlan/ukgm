@@ -1,7 +1,7 @@
 package entities
 
 type District struct {
-	ID     interface{} `json:"id" bson:"_id, omitempty"`
+	ID     interface{} `json:"id" bson:"_id,omitempty"`
 	Email  string      `json:"email" bson:"email"`
 	Name   string      `json:"name" bson:"name"`
 	Units  []*Unit     `json:"units" bson:"units"`
