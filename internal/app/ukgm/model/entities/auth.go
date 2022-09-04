@@ -11,3 +11,10 @@ type Auth struct {
 	Token    string `json:"token"`
 	AuthUser *auth.Token
 }
+
+func GenerateAuth(authToken *auth.Token, token string) (*Auth) {
+	return &Auth{
+		Token:    token,
+		AuthUser: authToken,
+	}
+}

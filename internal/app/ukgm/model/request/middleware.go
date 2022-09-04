@@ -20,12 +20,12 @@ import (
 */
 
 type Middleware struct {
-	FirebaseApi *firebase_api.FirebaseApi
+	firebaseApi *firebase_api.FirebaseApi
 }
 
 func NewMiddleware(firebaseApi *firebase_api.FirebaseApi) *Middleware {
 	return &Middleware{
-		FirebaseApi: firebaseApi,
+		firebaseApi: firebaseApi,
 	}
 }
 
@@ -52,13 +52,13 @@ func (m *Middleware) JWTMiddleware(next http.Handler) http.Handler {
 			token = splitToken[1]
 		}
 
-		tokenID, err := m.FirebaseApi.SignInWithCustomToken(token)
+		tokenID, err := m.firebaseApi.SignInWithCustomToken(token)
 		if err != nil {
 			zap.S().Error(err)
 			responses.SendErrorJSON(responses.PrintErrorMessage(errors.New("token is invalid")), w)
 		}
 
-		authToken, err := m.FirebaseApi.EncodeToken(tokenID)
+		authToken, err := m.firebaseApi.EncodeToken(tokenID)
 		if err != nil {
 			zap.S().Error(err)
 			responses.SendErrorJSON(responses.PrintErrorMessage(errors.New("token is invalid")), w)

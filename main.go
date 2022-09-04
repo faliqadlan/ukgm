@@ -13,7 +13,7 @@ import (
 	"ukgm/internal/app/ukgm/model/request"
 	"ukgm/internal/app/ukgm/service"
 	webapiv1 "ukgm/internal/app/ukgm/webApiV1"
-	simple "ukgm/internal/app/ukgm/webApiV1/simpleHandler"
+	login_handler "ukgm/internal/app/ukgm/webApiV1/loginHandler"
 	"ukgm/internal/pkg/server"
 
 	"github.com/go-chi/chi"
@@ -49,9 +49,9 @@ func main() {
 		log.Panic(err)
 	}
 
-	newSimpleApi := simple.NewSimpleApi(newService)
+	loginApi := login_handler.NewLoginApi(firebaseApi)
 
-	newApi := webapiv1.NewApi(newService, newSimpleApi)
+	newApi := webapiv1.NewApi(newService, loginApi)
 	r.Route("/api/v1/", newApi.Init)
 
 	appHost := env.Get("PORT")
