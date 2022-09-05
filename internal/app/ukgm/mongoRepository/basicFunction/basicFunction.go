@@ -19,4 +19,5 @@ type BasicMongo interface {
 	UpdateMany(ctx context.Context, cname string, filter bson.M, data bson.M, options *options.UpdateOptions) (result *mongo.UpdateResult, err error)
 	DeleteMany(ctx context.Context, cname string, filter bson.M, option *options.DeleteOptions) (result *mongo.DeleteResult, err error)
 	Delete(ctx context.Context, cname string, filter bson.M, data interface{}, options *options.DeleteOptions) (result *mongo.DeleteResult, err error)
+	LogPrint(message string)
 }

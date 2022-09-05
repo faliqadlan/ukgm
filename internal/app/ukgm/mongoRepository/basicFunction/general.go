@@ -2,6 +2,8 @@ package basicMongo
 
 import (
 	"context"
+	"fmt"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -134,6 +136,11 @@ func (r *Repo) Delete(ctx context.Context, cname string, filter bson.M, data int
 	if err != nil {
 		zap.S().Error(err)
 	}
-	
+
 	return
+}
+
+func (r *Repo) LogPrint(message string) {
+	t := time.Now().Local()
+	fmt.Println(t.Format("["+time.RFC1123+"] \n"), message)
 }
