@@ -9,6 +9,7 @@ var (
 	DocumentCtxKey    = &CtxKey{"Document"}
 	LimitCtxKey       = &CtxKey{"Limit"}
 	LayerCtxKey       = &CtxKey{"Layer"}
+	DistrictCtxKey    = &CtxKey{"District"}
 )
 
 type (
@@ -19,6 +20,10 @@ type (
 
 func (k *CtxKey) String() string {
 	return fmt.Sprintf("ukgm's context value: %s", k.name)
+}
+
+func GetDistrictCtxKey() (result *CtxKey) {
+	return DistrictCtxKey
 }
 
 func GetPageRequestCtxKey() (result *CtxKey) {

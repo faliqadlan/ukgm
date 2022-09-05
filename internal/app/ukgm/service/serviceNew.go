@@ -6,6 +6,7 @@ import (
 
 	"ukgm/internal/app/config/env"
 	mongorepository "ukgm/internal/app/ukgm/mongoRepository"
+	district_service "ukgm/internal/app/ukgm/service/district_service"
 	doctor_service "ukgm/internal/app/ukgm/service/doctorService"
 
 	"go.uber.org/zap"
@@ -14,6 +15,7 @@ import (
 type ServiceNew struct {
 	Repo *mongorepository.MongoRepo
 	*doctor_service.DoctorService
+	*district_service.DistrictService
 }
 
 func ServiceNewDeclare() (result *ServiceNew, err error) {
@@ -47,4 +49,5 @@ func MongoDeclare() (repo *mongorepository.MongoRepo, err error) {
 
 func (s *ServiceNew) Init() {
 	s.DoctorService = doctor_service.New(s.Repo)
+	s.DistrictService = district_service.New(s.Repo)
 }

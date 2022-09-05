@@ -8,6 +8,9 @@ type District struct {
 	Units  []*Unit     `json:"units" bson:"units"`
 	Doctor []*Doctor   `json:"Doctor" bson:"Doctor"`
 	Nurse  []*Nurse    `json:"Nurse" bson:"Nurse"`
+
+	// include
+	Timestamp
 }
 
 // func (d *District) ToAuthUser() *AuthUser {
