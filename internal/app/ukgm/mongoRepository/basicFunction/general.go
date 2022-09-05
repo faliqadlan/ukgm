@@ -6,6 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.uber.org/zap"
 )
 
 type Repo struct {
@@ -24,6 +25,7 @@ func (r *Repo) Count(ctx context.Context, cname string, filter bson.M) (count in
 
 	count64, err := collection.CountDocuments(ctx, filter)
 	if err != nil {
+		zap.S().Error(err)
 		return
 	}
 	count = int(count64)
@@ -36,6 +38,7 @@ func (r *Repo) Distinct(ctx context.Context, cname, fieldName string, filter bso
 
 	result, err = collection.Distinct(ctx, fieldName, filter)
 	if err != nil {
+		zap.S().Error(err)
 		return
 	}
 
@@ -46,6 +49,9 @@ func (r *Repo) Aggregate(ctx context.Context, cname string, aggregatePipeline in
 	collection := r.db.Collection(cname)
 
 	result, err = collection.Aggregate(ctx, aggregatePipeline, options)
+	if err != nil {
+		zap.S().Error(err)
+	}
 
 	return
 }
@@ -55,6 +61,7 @@ func (r *Repo) Find(ctx context.Context, cname string, filter bson.M, options *o
 
 	result, err = collection.Find(ctx, filter, options)
 	if err != nil {
+		zap.S().Error(err)
 		return
 	}
 
@@ -74,6 +81,9 @@ func (r *Repo) Show(ctx context.Context, cname string, filter bson.M, option *op
 func (r *Repo) Store(ctx context.Context, cname string, data interface{}, options *options.InsertOneOptions) (result *mongo.InsertOneResult, err error) {
 	collection := r.db.Collection(cname)
 	result, err = collection.InsertOne(ctx, data, options)
+	if err != nil {
+		zap.S().Error(err)
+	}
 	return
 }
 
@@ -82,6 +92,10 @@ func (r *Repo) Update(ctx context.Context, cname string, filter bson.M, data int
 	result, err = collection.UpdateOne(ctx, filter, bson.M{
 		"$set": data,
 	}, options)
+
+	if err != nil {
+		zap.S().Error(err)
+	}
 
 	return
 }
@@ -93,6 +107,10 @@ func (r *Repo) UpdateMany(ctx context.Context, cname string, filter bson.M, data
 		"$set": data,
 	}, options)
 
+	if err != nil {
+		zap.S().Error(err)
+	}
+
 	return
 }
 
@@ -101,6 +119,10 @@ func (r *Repo) DeleteMany(ctx context.Context, cname string, filter bson.M, opti
 
 	result, err = collection.DeleteMany(ctx, filter, option)
 
+	if err != nil {
+		zap.S().Error(err)
+	}
+
 	return
 }
 
@@ -108,5 +130,10 @@ func (r *Repo) Delete(ctx context.Context, cname string, filter bson.M, data int
 	var collection = r.db.Collection(cname)
 
 	result, err = collection.DeleteOne(ctx, data, options)
+
+	if err != nil {
+		zap.S().Error(err)
+	}
+	
 	return
 }

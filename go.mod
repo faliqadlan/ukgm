@@ -16,9 +16,12 @@ require (
 	github.com/jinzhu/now v1.1.5
 	github.com/joho/godotenv v1.4.0
 	github.com/lestrrat-go/jwx v1.2.25
+	github.com/stretchr/testify v1.8.0
 	go.mongodb.org/mongo-driver v1.10.1
 	go.uber.org/zap v1.20.0
 	golang.org/x/oauth2 v0.0.0-20220822191816-0ebed06d0094
 	google.golang.org/api v0.94.0
+	google.golang.org/grpc v1.48.0
 	gorm.io/gorm v1.23.8 // indirect
+	honnef.co/go/tools v0.0.1-2020.1.4
 )

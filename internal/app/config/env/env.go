@@ -18,7 +18,7 @@ func Get(name string) string {
 
 func getFromFile(name string) string {
 	if err := godotenv.Load(); err != nil {
-		log.Fatal("Error loading .env file")
+		log.Panic("Error loading .env file")
 	}
 
 	val := os.Getenv(name)

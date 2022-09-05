@@ -3,15 +3,17 @@ package entities
 import (
 	"errors"
 	"time"
+
+	"firebase.google.com/go/auth"
 )
 
 type Timestamp struct {
 	CreatedAt *time.Time `json:"created_at" bson:"created_at"`
-	CreatedBy AuthUser   `json:"created_by" bson:"created_by"`
+	CreatedBy auth.Token `json:"created_by" bson:"created_by"`
 	UpdatedAt *time.Time `json:"updated_at" bson:"updated_at"`
-	UpdatedBy AuthUser   `json:"updated_by" bson:"updated_by"`
+	UpdatedBy auth.Token `json:"updated_by" bson:"updated_by"`
 	DeletedAt *time.Time `json:"-" bson:"deleted_at"`
-	DeletedBy AuthUser   `json:"-" bson:"deleted_by"`
+	DeletedBy auth.Token `json:"-" bson:"deleted_by"`
 }
 
 type TimeRange struct {
@@ -26,7 +28,7 @@ func (timeRange *TimeRange) Validate() error {
 	return errors.New("from cannot be after To")
 }
 
-func (timestamp *Timestamp) CreateNew(auth *AuthUser) {
+func (timestamp *Timestamp) CreateNew(auth *auth.Token) {
 	location, _ := time.LoadLocation("Asia/Jakarta")
 	now := time.Now().In(location).Local()
 	timestamp.CreatedAt = &now
@@ -35,14 +37,14 @@ func (timestamp *Timestamp) CreateNew(auth *AuthUser) {
 	timestamp.UpdatedBy = *auth
 }
 
-func (timestamp *Timestamp) Update(auth *AuthUser) {
+func (timestamp *Timestamp) Update(auth *auth.Token) {
 	location, _ := time.LoadLocation("Asia/Jakarta")
 	now := time.Now().In(location).Local()
 	timestamp.UpdatedAt = &now
 	timestamp.UpdatedBy = *auth
 }
 
-func (timestamp *Timestamp) Delete(auth *AuthUser) {
+func (timestamp *Timestamp) Delete(auth *auth.Token) {
 	location, _ := time.LoadLocation("Asia/Jakarta")
 	now := time.Now().In(location).Local()
 	timestamp.DeletedAt = &now

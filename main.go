@@ -7,15 +7,22 @@ import (
 	"os/signal"
 	"syscall"
 
+	"ukgm/internal/app/config"
 	"ukgm/internal/app/config/env"
+	firebase_api "ukgm/internal/app/config/firebase"
+	"ukgm/internal/app/ukgm/model/request"
 	"ukgm/internal/app/ukgm/service"
 	webapiv1 "ukgm/internal/app/ukgm/webApiV1"
-	simple "ukgm/internal/app/ukgm/webApiV1/simpleHandler"
+	login_handler "ukgm/internal/app/ukgm/webApiV1/loginHandler"
 	"ukgm/internal/pkg/server"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
 )
+
+func init() {
+	config.SetupLogger()
+}
 
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
@@ -29,17 +36,22 @@ func main() {
 		AllowCredentials: true,
 	})
 
+	firebaseApi := firebase_api.NewFirebaseApi()
+
+	middlewareSrv := request.NewMiddleware(firebaseApi)
+
 	r.Use(cors.Handler)
-	// r.Use(request.CommonMiddleware)
+	r.Use(middlewareSrv.CommonMiddleware)
+	r.Use(middlewareSrv.JWTMiddleware)
 
 	newService, err := service.ServiceNewDeclare()
 	if err != nil {
 		log.Panic(err)
 	}
 
-	newSimpleApi := simple.NewSimpleApi(newService)
+	loginApi := login_handler.NewLoginApi(firebaseApi)
 
-	newApi := webapiv1.NewApi(newService, newSimpleApi)
+	newApi := webapiv1.NewApi(newService, loginApi)
 	r.Route("/api/v1/", newApi.Init)
 
 	appHost := env.Get("PORT")

@@ -9,9 +9,11 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
+	"ukgm/internal/app/config/env"
 
 	firebase "firebase.google.com/go"
 	"firebase.google.com/go/auth"
+	"go.uber.org/zap"
 	"google.golang.org/api/option"
 )
 
@@ -22,6 +24,16 @@ const (
 	verifyCustomTokenURL = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyCustomToken?key=%s"
 	verifyPasswordURL    = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=%s"
 )
+
+type FirebaseApi struct {
+	FirebaseApp *firebase.App
+}
+
+func NewFirebaseApi() *FirebaseApi {
+	return &FirebaseApi{
+		FirebaseApp: SetupFirebase(),
+	}
+}
 
 func SetupFirebase() *firebase.App {
 
@@ -41,9 +53,9 @@ func SetupFirebase() *firebase.App {
 	return app
 }
 
-func AuthenticationID(app *firebase.App, uid string) *auth.UserRecord {
+func (f *FirebaseApi) AuthenticationByID(uid string) *auth.UserRecord {
 	// Get an auth client from the firebase.App
-	client, err := app.Auth(context.Background())
+	client, err := f.FirebaseApp.Auth(context.Background())
 	if err != nil {
 		log.Fatalf("error getting Auth client: %v\n", err)
 	}
@@ -52,13 +64,13 @@ func AuthenticationID(app *firebase.App, uid string) *auth.UserRecord {
 	if err != nil {
 		log.Fatalf("error getting user %s: %v\n", uid, err)
 	}
-	log.Printf("Successfully fetched user data: %v\n", u)
+	// log.Printf("Successfully fetched user data: %v\n", u)
 
 	return u
 }
 
-func GenerateToken(app *firebase.App, uid string) string {
-	client, err := app.Auth(context.Background())
+func (f *FirebaseApi) GenerateToken(uid string) string {
+	client, err := f.FirebaseApp.Auth(context.Background())
 	if err != nil {
 		log.Fatalf("error getting Auth client: %v\n", err)
 	}
@@ -68,28 +80,44 @@ func GenerateToken(app *firebase.App, uid string) string {
 		log.Fatalf("error minting custom token: %v\n", err)
 	}
 
-	log.Printf("Got custom token: %v\n", token)
+	// log.Printf("Got custom token: %v\n", token)
 
 	return token
 }
 
-func EncodeToken(app *firebase.App, token string) *auth.Token {
-	client, err := app.Auth(context.Background())
+func (f *FirebaseApi) EncodeToken( token string) (auth *auth.Token, err error) {
+	client, err := f.FirebaseApp.Auth(context.Background())
 	if err != nil {
-		log.Fatalf("error getting Auth client: %v\n", err)
+		zap.S().Error(err)
+		return nil, fmt.Errorf("error getting auth client: %v", err)
 	}
 
 	authTok, err := client.VerifyIDToken(context.Background(), token)
 	if err != nil {
-		log.Fatalf("error verifying ID token: %v\n", err)
+		zap.S().Error(err)
+		return nil, fmt.Errorf("error verifying ID token: %v", err)
 	}
 
-	log.Printf("Verified ID token: %v\n", authTok)
+	// log.Printf("Verified ID token: %v\n", authTok)
 
-	return authTok
+	return authTok, nil
 }
 
-func SignInWithCustomToken(token string, privateKeyID string) (string, error) {
+func (f *FirebaseApi) postRequest(url string, req []byte) ([]byte, error) {
+	resp, err := http.Post(url, "application/json", bytes.NewBuffer(req))
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		zap.S().Error(err)
+		return nil, fmt.Errorf("unexpected http status code: %d", resp.StatusCode)
+	}
+	return ioutil.ReadAll(resp.Body)
+}
+
+func (f *FirebaseApi) SignInWithCustomToken(token string) (string, error) {
 	req, err := json.Marshal(map[string]interface{}{
 		"token":             token,
 		"returnSecureToken": true,
@@ -102,7 +130,32 @@ func SignInWithCustomToken(token string, privateKeyID string) (string, error) {
 	// if err != nil {
 	// 	return "", err
 	// }
-	resp, err := postRequest(fmt.Sprintf(verifyCustomTokenURL, privateKeyID), req)
+
+	resp, err := f.postRequest(fmt.Sprintf(verifyCustomTokenURL, env.Get("WEB_API_KEY")), req)
+	if err != nil {
+		zap.S().Error(err)
+		return "", err
+	}
+	var respBody struct {
+		IDToken string `json:"idToken"`
+	}
+	if err := json.Unmarshal(resp, &respBody); err != nil {
+		zap.S().Error(err)
+		return "", err
+	}
+	return respBody.IDToken, err
+}
+
+func (f *FirebaseApi) SignInWithPassword(email, password string) (string, error) {
+	req, err := json.Marshal(map[string]interface{}{
+		"email":    email,
+		"password": password,
+	})
+	if err != nil {
+		return "", err
+	}
+
+	resp, err := f.postRequest(fmt.Sprintf(verifyPasswordURL, env.Get("WEB_API_KEY")), req)
 	if err != nil {
 		return "", err
 	}
@@ -113,17 +166,4 @@ func SignInWithCustomToken(token string, privateKeyID string) (string, error) {
 		return "", err
 	}
 	return respBody.IDToken, err
-}
-
-func postRequest(url string, req []byte) ([]byte, error) {
-	resp, err := http.Post(url, "application/json", bytes.NewBuffer(req))
-	if err != nil {
-		return nil, err
-	}
-
-	defer resp.Body.Close()
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("unexpected http status code: %d", resp.StatusCode)
-	}
-	return ioutil.ReadAll(resp.Body)
 }

@@ -25,6 +25,7 @@ go.work
 *.vscode
 
 #other
+archive
 cmd/console
-
+internal/pkg/token/firebase/ukgm-f77a7-firebase-adminsdk-s2wqn-9226607831/json
 internal/pkg/token
