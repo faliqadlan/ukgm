@@ -33,3 +33,13 @@ func (d *DistrictApi) ShowDistrictbyID(w http.ResponseWriter, r *http.Request) {
 
 	responses.SendJSON(responses.NewResponse(district), w)
 }
+
+func (d *DistrictApi) GetDistrictList(w http.ResponseWriter, r *http.Request) {
+	districtList, err := d.srv.GetDistrictList()
+	if err != nil {
+		zap.S().Error(err)
+		responses.SendErrorJSON(responses.PrintErrorMessage(err), w)
+		return
+	}
+	responses.SendJSON(responses.NewResponse(districtList), w)
+}

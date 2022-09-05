@@ -51,3 +51,18 @@ func (s *ServiceNew) Init() {
 	s.DoctorService = doctor_service.New(s.Repo)
 	s.DistrictService = district_service.New(s.Repo)
 }
+
+func MongoDeclareForTesting() (repo *mongorepository.MongoRepo, err error) {
+	dbUsername := env.Get("DB_USERNAME")
+	dbPassword := env.Get("DB_PASSWORD")
+	dbHost := env.Get("DB_HOST")
+	dbPort := env.Get("DB_PORT")
+	dbName := env.Get("DB_DATABASE_TEST")
+	dbURL := fmt.Sprintf("mongodb+srv://%s:%s@%s/%s", dbUsername, url.QueryEscape(dbPassword), dbHost, dbPort)
+	repo, err = mongorepository.NewMongoRepo(dbURL, dbName)
+	if err != nil {
+		zap.S().Error(err)
+		return
+	}
+	return
+}

@@ -25,6 +25,10 @@ func (d *DistrictService) ShowDistrict(filter bson.M, opt *options.FindOneOption
 	return d.Repo.ShowDistrict(filter, opt)
 }
 
+func (d *DistrictService) FetchDistrictList(filter bson.M, opt *options.FindOptions) (result []entities.DistrictList, err error) {
+	return d.Repo.FetchDistrictList(filter, opt)
+}
+
 func (d *DistrictService) FindManyDistricts(filter bson.M, opt *options.FindOptions) (result []entities.District, err error) {
-	return d.Repo.FindManyDistricts(filter, opt)
+	return d.Repo.FetchManyDistricts(filter, opt)
 }

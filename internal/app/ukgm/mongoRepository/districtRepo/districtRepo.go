@@ -26,7 +26,30 @@ func (d *DistrictRepo) ShowDistrict(filter bson.M, options *options.FindOneOptio
 	return result, nil
 }
 
-func (d *DistrictRepo) FindManyDistricts(filter bson.M, opt *options.FindOptions) (result []entities.District, err error) {
+func (d *DistrictRepo) FetchDistrictList(filter bson.M, opt *options.FindOptions) (result []entities.DistrictList, err error) {
+	if opt == nil {
+		opt = &options.FindOptions{}
+	}
+
+	cursor, err := d.Find(context.TODO(), DistrictCollection, filter, opt)
+	if err != nil {
+		zap.S().Error(err)
+		return nil, err
+	}
+	defer cursor.Close(context.TODO())
+
+	for cursor.Next(context.TODO()) {
+		district := entities.District{}
+		if err = cursor.Decode(&district); err != nil {
+			zap.S().Error(err)
+			return nil, err
+		}
+		result = append(result, *district.ToDistrictList())
+	}
+	return result, nil
+}
+
+func (d *DistrictRepo) FetchManyDistricts(filter bson.M, opt *options.FindOptions) (result []entities.District, err error) {
 	if opt == nil {
 		opt = &options.FindOptions{}
 	}

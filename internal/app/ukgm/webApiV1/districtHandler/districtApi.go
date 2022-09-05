@@ -15,6 +15,7 @@ func NewDistrictApi(srv *service.ServiceNew) *DistrictApi {
 }
 
 func (d *DistrictApi) Init(r chi.Router) {
+	r.Get("/",d.GetDistrictList)
 	r.Route("/{district_id}", func(r chi.Router) {
 		r.Use(d.DistrictCtx)
 		r.Get("/", d.ShowDistrictbyID)
