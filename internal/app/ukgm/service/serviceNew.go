@@ -17,7 +17,7 @@ type ServiceNew struct {
 	Repo *mongorepository.MongoRepo
 	*doctor_service.DoctorService
 	*district_service.DistrictService
-	UserService *user_service.UserService
+	*user_service.UserService
 }
 
 func ServiceNewDeclare() (result *ServiceNew, err error) {
