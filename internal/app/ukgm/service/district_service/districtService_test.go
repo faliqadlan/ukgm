@@ -16,7 +16,7 @@ func MongoDeclareForTesting() (repo *mongorepository.MongoRepo, err error) {
 	dbPassword := env.Get("DB_PASSWORD")
 	dbHost := env.Get("DB_HOST")
 	dbPort := env.Get("DB_PORT")
-	dbName := env.Get("DB_DATABASE_TEST")
+	dbName := env.Get("DB_DATABASE")
 	dbURL := fmt.Sprintf("mongodb+srv://%s:%s@%s/%s", dbUsername, url.QueryEscape(dbPassword), dbHost, dbPort)
 	repo, err = mongorepository.NewMongoRepo(dbURL, dbName)
 	if err != nil {
