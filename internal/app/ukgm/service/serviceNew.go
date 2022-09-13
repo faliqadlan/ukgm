@@ -8,6 +8,7 @@ import (
 	mongorepository "ukgm/internal/app/ukgm/mongoRepository"
 	district_service "ukgm/internal/app/ukgm/service/district_service"
 	doctor_service "ukgm/internal/app/ukgm/service/doctorService"
+	user_service "ukgm/internal/app/ukgm/service/userService"
 
 	"go.uber.org/zap"
 )
@@ -16,6 +17,7 @@ type ServiceNew struct {
 	Repo *mongorepository.MongoRepo
 	*doctor_service.DoctorService
 	*district_service.DistrictService
+	*user_service.UserService
 }
 
 func ServiceNewDeclare() (result *ServiceNew, err error) {
@@ -50,6 +52,7 @@ func MongoDeclare() (repo *mongorepository.MongoRepo, err error) {
 func (s *ServiceNew) Init() {
 	s.DoctorService = doctor_service.New(s.Repo)
 	s.DistrictService = district_service.New(s.Repo)
+	s.UserService = user_service.New(s.Repo)
 }
 
 func MongoDeclareForTesting() (repo *mongorepository.MongoRepo, err error) {
@@ -57,7 +60,7 @@ func MongoDeclareForTesting() (repo *mongorepository.MongoRepo, err error) {
 	dbPassword := env.Get("DB_PASSWORD")
 	dbHost := env.Get("DB_HOST")
 	dbPort := env.Get("DB_PORT")
-	dbName := env.Get("DB_DATABASE_TEST")
+	dbName := env.Get("DB_DATABASE")
 	dbURL := fmt.Sprintf("mongodb+srv://%s:%s@%s/%s", dbUsername, url.QueryEscape(dbPassword), dbHost, dbPort)
 	repo, err = mongorepository.NewMongoRepo(dbURL, dbName)
 	if err != nil {
