@@ -56,8 +56,6 @@ func (u *UnitService) StoreData(data interface{}, auth *auth.Token) (result inte
 		return nil, errGeneral
 	}
 
-	district.Units = append(district.Units, &dataUnit)
-
 	filter = bson.M{
 		"timestamp.deleted_at": nil,
 		"name":                 dataUnit.Name,
@@ -84,11 +82,6 @@ func (u *UnitService) StoreData(data interface{}, auth *auth.Token) (result inte
 
 	if err = mongo.WithSession(ctx, session, func(sc mongo.SessionContext) error {
 
-		if err = u.DistrictRepo.UpdateDistrict(district, sc); err != nil {
-			zap.S().Error(err)
-			return errGeneral
-		}
-
 		resultUnit, err := u.UnitRepo.StoreUnit(&dataUnit, sc)
 
 		if err != nil {
@@ -96,7 +89,14 @@ func (u *UnitService) StoreData(data interface{}, auth *auth.Token) (result inte
 			return errGeneral
 		}
 
+		district.Units = append(district.Units, resultUnit)
+
 		result = resultUnit
+
+		if err = u.DistrictRepo.UpdateDistrict(district, sc); err != nil {
+			zap.S().Error(err)
+			return errGeneral
+		}
 
 		if err = session.CommitTransaction(sc); err != nil {
 			zap.S().Error(err)
@@ -115,3 +115,5 @@ func (u *UnitService) StoreData(data interface{}, auth *auth.Token) (result inte
 
 	return result, nil
 }
+
+// func (u *UnitService) GetUnitList

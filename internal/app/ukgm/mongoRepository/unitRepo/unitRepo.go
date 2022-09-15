@@ -48,3 +48,26 @@ func (u *UnitRepo) ShowUnit(filter bson.M, options *options.FindOneOptions, ctx 
 
 	return result, nil
 }
+
+func (u *UnitRepo) FecthUnitList(filter bson.M, opt *options.FindOptions, ctx context.Context) (result []entities.UnitList, err error) {
+	if opt == nil {
+		opt = &options.FindOptions{}
+	}
+
+	cursor, err := u.Find(ctx, UnitCollection, filter, opt)
+	if err != nil {
+		zap.S().Error(err)
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	for cursor.Next(ctx) {
+		unit := entities.Unit{}
+		if err = cursor.Decode(&unit); err != nil {
+			zap.S().Error(err)
+			return nil, err
+		}
+		result = append(result, *unit.ToUnitList())
+	}
+	return result, nil
+}

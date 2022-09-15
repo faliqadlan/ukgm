@@ -19,7 +19,7 @@ type ServiceNew struct {
 	*doctor_service.DoctorService
 	*district_service.DistrictService
 	user_service.UserServiceColl
-	UnitSrv ServiceCollection
+	UnitSrvStoreData StoreDataSrv
 }
 
 func ServiceNewDeclare() (result *ServiceNew, err error) {
@@ -55,7 +55,7 @@ func (s *ServiceNew) Init() {
 	s.DoctorService = doctor_service.New(s.Repo)
 	s.DistrictService = district_service.New(s.Repo)
 	s.UserServiceColl = user_service.New(s.Repo)
-	s.UnitSrv = unit_service.New(s.Repo)
+	s.UnitSrvStoreData = unit_service.New(s.Repo)
 }
 
 func MongoDeclareForTesting() (repo *mongorepository.MongoRepo, err error) {
