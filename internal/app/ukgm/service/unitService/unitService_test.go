@@ -15,6 +15,9 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readconcern"
+	"go.mongodb.org/mongo-driver/mongo/writeconcern"
 	"go.uber.org/zap"
 )
 
@@ -38,27 +41,13 @@ func TestStoreUnit(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	// t.Log(repo)
-
-	// var uid string = "n8xgf00q7udFuCX7jbTIhtyf2gk2"
-	// firebaseApi := firebase_api.NewFirebaseApi()
-	// firebaseToken := firebaseApi.GenerateToken(uid)
-	// tokenID, err := firebaseApi.SignInWithCustomToken(firebaseToken)
-	// if err != nil {
-	// 	t.Log(err)
-	// }
-
-	// authToken, err := firebaseApi.EncodeToken(tokenID)
-	// if err != nil {
-	// 	t.Log(err)
-	// }
 
 	srv := New(repo)
 
 	t.Run("success store unit", func(t *testing.T) {
 		unit := entities.Unit{
 			DistrictID: "631dd39ef9c8ba488679be28",
-			Name:       "unit 2 test",
+			Name:       "unit 4 test",
 		}
 
 		res, err := srv.StoreData(unit, &auth.Token{})
@@ -86,10 +75,9 @@ func TestTransactionCommit(t *testing.T) {
 	var result *mongo.UpdateResult
 	var session mongo.Session
 	var update = bson.D{{Key: "$set", Value: bson.D{{Key: "year", Value: int32(2000)}}}}
-
-	// if client, err = repo.Client; err != nil {
-	// 	t.Fatal(err)
-	// }
+	wc := writeconcern.New(writeconcern.WMajority())
+	rc := readconcern.Snapshot()
+	txnOpts := options.Transaction().SetWriteConcern(wc).SetReadConcern(rc)
 
 	defer client.Disconnect(ctx)
 	collection = client.Database("ukgm_dev").Collection("tests")
@@ -100,14 +88,25 @@ func TestTransactionCommit(t *testing.T) {
 	if session, err = client.StartSession(); err != nil {
 		t.Fatal(err)
 	}
-	if err = session.StartTransaction(); err != nil {
-		t.Fatal(err)
-	}
-	if err = mongo.WithSession(ctx, session, func(sc mongo.SessionContext) error {
+	defer session.EndSession(ctx)
+
+	err = mongo.WithSession(ctx, session, func(sc mongo.SessionContext) error {
+
+		if err = session.StartTransaction(txnOpts); err != nil {
+			t.Fatal(err)
+			return err
+		}
+
 		id = primitive.NewObjectID()
 		doc = bson.M{"_id": id, "hometown": "Atlanta 2", "year": int32(1998)}
-		if _, err = collection.InsertOne(ctx, doc); err != nil {
+
+		_, err = collection.InsertOne(sc, doc)
+
+		err = fmt.Errorf("create failed")
+
+		if err != nil {
 			t.Fatal(err)
+			return err
 		}
 
 		result, err = collection.UpdateOne(sc, bson.M{"_id": id}, update)
@@ -116,23 +115,30 @@ func TestTransactionCommit(t *testing.T) {
 
 		if err != nil {
 			log.Fatal(err)
+			return err
 		}
 
 		if result.MatchedCount != 1 || result.ModifiedCount != 1 {
 			// t.Fatal("replace failed, expected 1 but got", result.MatchedCount)
 			log.Fatal("replace failed, expected 1 but got", result.MatchedCount)
+			return err
 		}
 
 		err = session.CommitTransaction(sc)
 
 		if err != nil {
 			log.Fatal(err)
+			return err
 		}
 		return nil
-	}); err != nil {
-		log.Fatal(err)
+	})
+
+	if err != nil {
+		if abortErr := session.AbortTransaction(context.Background()); abortErr != nil {
+			panic(abortErr)
+		}
+		panic(err)
 	}
-	session.EndSession(ctx)
 
 	// var v bson.M
 	// if err = collection.FindOne(ctx, bson.D{{Key: "_id", Value: id}}).Decode(&v); err != nil {

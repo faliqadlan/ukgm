@@ -21,7 +21,7 @@ type DistrictRepo struct {
 
 const DistrictCollection = "districts"
 
-func (d *DistrictRepo) UpdateDistrict(data *entities.District) (err error) {
+func (d *DistrictRepo) UpdateDistrict(data *entities.District, ctx context.Context) (err error) {
 	update := *data
 	update.ID = nil
 
@@ -36,7 +36,7 @@ func (d *DistrictRepo) UpdateDistrict(data *entities.District) (err error) {
 		"_id":                  oId,
 	}
 
-	_, err = d.Update(context.TODO(), DistrictCollection, filter, update, nil)
+	_, err = d.Update(ctx, DistrictCollection, filter, update, nil)
 	if err != nil {
 		zap.S().Error(err)
 		return
@@ -44,9 +44,9 @@ func (d *DistrictRepo) UpdateDistrict(data *entities.District) (err error) {
 	return
 }
 
-func (d *DistrictRepo) ShowDistrict(filter bson.M, options *options.FindOneOptions) (result *entities.District, err error) {
+func (d *DistrictRepo) ShowDistrict(filter bson.M, options *options.FindOneOptions, ctx context.Context) (result *entities.District, err error) {
 	result = &entities.District{}
-	err = d.Show(context.TODO(), DistrictCollection, filter, options).Decode(result)
+	err = d.Show(ctx, DistrictCollection, filter, options).Decode(result)
 	if err != nil {
 		zap.S().Error(err)
 		return nil, err
@@ -63,19 +63,19 @@ func (d *DistrictRepo) ShowDistrict(filter bson.M, options *options.FindOneOptio
 	return result, nil
 }
 
-func (d *DistrictRepo) FetchDistrictList(filter bson.M, opt *options.FindOptions) (result []entities.DistrictList, err error) {
+func (d *DistrictRepo) FetchDistrictList(filter bson.M, opt *options.FindOptions, ctx context.Context) (result []entities.DistrictList, err error) {
 	if opt == nil {
 		opt = &options.FindOptions{}
 	}
 
-	cursor, err := d.Find(context.TODO(), DistrictCollection, filter, opt)
+	cursor, err := d.Find(ctx, DistrictCollection, filter, opt)
 	if err != nil {
 		zap.S().Error(err)
 		return nil, err
 	}
-	defer cursor.Close(context.TODO())
+	defer cursor.Close(ctx)
 
-	for cursor.Next(context.TODO()) {
+	for cursor.Next(ctx) {
 		district := entities.District{}
 		if err = cursor.Decode(&district); err != nil {
 			zap.S().Error(err)
@@ -86,19 +86,19 @@ func (d *DistrictRepo) FetchDistrictList(filter bson.M, opt *options.FindOptions
 	return result, nil
 }
 
-func (d *DistrictRepo) FetchManyDistricts(filter bson.M, opt *options.FindOptions) (result []entities.District, err error) {
+func (d *DistrictRepo) FetchManyDistricts(filter bson.M, opt *options.FindOptions, ctx context.Context) (result []entities.District, err error) {
 	if opt == nil {
 		opt = &options.FindOptions{}
 	}
 
-	cursor, err := d.Find(context.TODO(), DistrictCollection, filter, opt)
+	cursor, err := d.Find(ctx, DistrictCollection, filter, opt)
 	if err != nil {
 		zap.S().Error(err)
 		return nil, err
 	}
-	defer cursor.Close(context.TODO())
+	defer cursor.Close(ctx)
 
-	for cursor.Next(context.TODO()) {
+	for cursor.Next(ctx) {
 		district := entities.District{}
 		if err = cursor.Decode(&district); err != nil {
 			zap.S().Error(err)

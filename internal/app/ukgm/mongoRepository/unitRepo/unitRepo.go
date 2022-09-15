@@ -19,8 +19,8 @@ type UnitRepo struct {
 
 const UnitCollection = "units"
 
-func (u *UnitRepo) StoreUnit(data *entities.Unit) (result *entities.Unit, err error) {
-	mongoResult, err := u.Store(context.TODO(), UnitCollection, data, nil)
+func (u *UnitRepo) StoreUnit(data *entities.Unit, ctx context.Context) (result *entities.Unit, err error) {
+	mongoResult, err := u.Store(ctx, UnitCollection, data, nil)
 
 	if err != nil {
 		zap.S().Error(err)
@@ -30,8 +30,9 @@ func (u *UnitRepo) StoreUnit(data *entities.Unit) (result *entities.Unit, err er
 	return data, nil
 }
 
-func (u *UnitRepo) ShowUnit(filter bson.M, options *options.FindOneOptions) (result *entities.Unit, err error) {
-	err = u.Show(context.TODO(), UnitCollection, filter, options).Decode(result)
+func (u *UnitRepo) ShowUnit(filter bson.M, options *options.FindOneOptions, ctx context.Context) (result *entities.Unit, err error) {
+	result = &entities.Unit{}
+	err = u.Show(ctx, UnitCollection, filter, options).Decode(result)
 	if err != nil {
 		zap.S().Error(err)
 		return nil, err
@@ -47,8 +48,3 @@ func (u *UnitRepo) ShowUnit(filter bson.M, options *options.FindOneOptions) (res
 
 	return result, nil
 }
-
-// func (u *UnitRepo) StoreUnitSession(data *entities.Unit) (result *entities.Unit, err error) {
-// 	var session *mongo.Session
-
-// }

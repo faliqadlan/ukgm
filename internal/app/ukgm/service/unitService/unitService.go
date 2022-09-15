@@ -3,7 +3,6 @@ package unit_service
 import (
 	"context"
 	"fmt"
-	"log"
 
 	"ukgm/internal/app/ukgm/model/entities"
 	mongorepository "ukgm/internal/app/ukgm/mongoRepository"
@@ -31,13 +30,10 @@ func New(repo *mongorepository.MongoRepo) *UnitService {
 
 func (u *UnitService) StoreData(data interface{}, auth *auth.Token) (result interface{}, err error) {
 
-	log.SetFlags(log.LstdFlags | log.Lshortfile)
-
 	errGeneral := fmt.Errorf("failed to store new unit")
 	var ctx = context.Background()
 	var client = u.UnitRepo.Client
 	var session mongo.Session
-	var collection = client.Database("ukgm_dev").Collection("units")
 
 	dataUnit := data.(entities.Unit)
 
@@ -54,7 +50,7 @@ func (u *UnitService) StoreData(data interface{}, auth *auth.Token) (result inte
 		"_id":                  districtId,
 	}
 
-	district, err := u.DistrictRepo.ShowDistrict(filter, nil)
+	district, err := u.DistrictRepo.ShowDistrict(filter, nil, context.TODO())
 	if err != nil {
 		zap.S().Error(err)
 		return nil, errGeneral
@@ -62,11 +58,24 @@ func (u *UnitService) StoreData(data interface{}, auth *auth.Token) (result inte
 
 	district.Units = append(district.Units, &dataUnit)
 
+	filter = bson.M{
+		"timestamp.deleted_at": nil,
+		"name":                 dataUnit.Name,
+		"district_id":          dataUnit.DistrictID,
+	}
+
+	_, errAvailable := u.UnitRepo.ShowUnit(filter, nil, context.TODO())
+	if errAvailable == nil {
+		zap.S().Error(err)
+		return nil, fmt.Errorf("unit with name %v in district %v is already available", dataUnit.Name, district.Name)
+	}
+
 	defer client.Disconnect(ctx)
 	if session, err = client.StartSession(); err != nil {
 		zap.S().Error(err)
 		return nil, errGeneral
 	}
+	defer session.EndSession(ctx)
 
 	if err = session.StartTransaction(); err != nil {
 		zap.S().Error(err)
@@ -75,34 +84,34 @@ func (u *UnitService) StoreData(data interface{}, auth *auth.Token) (result inte
 
 	if err = mongo.WithSession(ctx, session, func(sc mongo.SessionContext) error {
 
-		if err = u.DistrictRepo.UpdateDistrict(district); err != nil {
-			log.Fatal(err)
+		if err = u.DistrictRepo.UpdateDistrict(district, sc); err != nil {
+			zap.S().Error(err)
+			return errGeneral
 		}
 
-		resultUnit, err := collection.InsertOne(ctx, dataUnit)
+		resultUnit, err := u.UnitRepo.StoreUnit(&dataUnit, sc)
 
-		err1 := fmt.Errorf("error updating")
-		if err1 != nil {
-			log.Fatal(err, err1)
+		if err != nil {
+			zap.S().Error(err)
+			return errGeneral
 		}
 
 		result = resultUnit
 
 		if err = session.CommitTransaction(sc); err != nil {
-			log.Fatal(err)
+			zap.S().Error(err)
+			return errGeneral
 		}
 
 		return nil
 	}); err != nil {
-		log.Println(err)
-		// if err = session.AbortTransaction(ctx); err != nil {
-		// 	zap.S().Error(err)
-		// 	log.Fatal(err)
-		// }
-		// zap.S().Error(err)
-		log.Fatal(err)
+		if abortErr := session.AbortTransaction(context.Background()); abortErr != nil {
+			zap.S().Error(err)
+			return nil, errGeneral
+		}
+		zap.S().Error(err)
+		return nil, errGeneral
 	}
-	session.EndSession(ctx)
 
 	return result, nil
 }

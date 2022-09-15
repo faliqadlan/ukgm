@@ -1,6 +1,7 @@
 package districtservice
 
 import (
+	"context"
 	"ukgm/internal/app/ukgm/model/entities"
 	mongorepository "ukgm/internal/app/ukgm/mongoRepository"
 	district_repo "ukgm/internal/app/ukgm/mongoRepository/districtRepo"
@@ -22,13 +23,13 @@ func New(repo *mongorepository.MongoRepo) *DistrictService {
 }
 
 func (d *DistrictService) ShowDistrict(filter bson.M, opt *options.FindOneOptions) (result *entities.District, err error) {
-	return d.Repo.ShowDistrict(filter, opt)
+	return d.Repo.ShowDistrict(filter, opt, context.TODO())
 }
 
 func (d *DistrictService) FetchDistrictList(filter bson.M, opt *options.FindOptions) (result []entities.DistrictList, err error) {
-	return d.Repo.FetchDistrictList(filter, opt)
+	return d.Repo.FetchDistrictList(filter, opt, context.TODO())
 }
 
 func (d *DistrictService) FindManyDistricts(filter bson.M, opt *options.FindOptions) (result []entities.District, err error) {
-	return d.Repo.FetchManyDistricts(filter, opt)
+	return d.Repo.FetchManyDistricts(filter, opt, context.TODO())
 }
