@@ -13,6 +13,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.uber.org/zap"
 )
 
@@ -116,4 +117,17 @@ func (u *UnitService) StoreData(data interface{}, auth *auth.Token) (result inte
 	return result, nil
 }
 
-// func (u *UnitService) GetUnitList
+func (u *UnitService) GetList(input ...string) (result interface{}, err error) {
+	filter := bson.M{
+		"timestamp.deleted_at": nil,
+		"district_id":          input[0],
+	}
+
+	res, err := u.UnitRepo.FecthUnitList(filter, options.Find().SetSort(bson.D{{Key: "name", Value: 1}}), context.TODO())
+	if err != nil {
+		zap.S().Error(err)
+		return nil, err
+	}
+
+	return res, nil
+}

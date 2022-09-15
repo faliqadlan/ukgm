@@ -58,6 +58,30 @@ func TestStoreUnit(t *testing.T) {
 	})
 }
 
+func TestUnitList(t *testing.T) {
+
+	repo, err := MongoDeclareForTesting()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	srv := New(repo)
+
+	t.Run("success get unit list", func(t *testing.T) {
+
+		res, err := srv.GetList("631dd39ef9c8ba488679be28")
+		assert.Equal(t, err, nil)
+
+		res1 := res.([]entities.UnitList)
+
+		for _, v := range res1 {
+			log.Println(v)
+		}
+
+	})
+
+}
+
 func TestTransactionCommit(t *testing.T) {
 
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
@@ -139,18 +163,4 @@ func TestTransactionCommit(t *testing.T) {
 		}
 		panic(err)
 	}
-
-	// var v bson.M
-	// if err = collection.FindOne(ctx, bson.D{{Key: "_id", Value: id}}).Decode(&v); err != nil {
-	// 	t.Fatal(err)
-	// }
-	// if v["year"] != int32(2000) {
-	// 	t.Log(v)
-	// 	t.Fatal("expected 2000 but got", v["year"])
-	// }
-
-	// res, _ := collection.DeleteOne(ctx, bson.M{"_id": id})
-	// if res.DeletedCount != 1 {
-	// 	t.Fatal("delete failed, expected 1 but got", res.DeletedCount)
-	// }
 }

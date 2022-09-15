@@ -7,5 +7,5 @@ type StoreDataSrv interface {
 }
 
 type GetListsrv interface {
-	GetList(input ...string) (result []interface{}, err error)
+	GetList(input ...string) (result interface{}, err error)
 }
