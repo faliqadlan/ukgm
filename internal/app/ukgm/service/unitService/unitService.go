@@ -1,6 +1,7 @@
 package unit_service
 
 import (
+	"context"
 	"fmt"
 	"ukgm/internal/app/ukgm/model/entities"
 	mongorepository "ukgm/internal/app/ukgm/mongoRepository"
@@ -10,6 +11,7 @@ import (
 	"firebase.google.com/go/auth"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.uber.org/zap"
 )
 
@@ -51,8 +53,43 @@ func (u *UnitService) StoreData(data interface{}, auth *auth.Token) (result inte
 
 	district.Units = append(district.Units, dataUnit)
 
-	err = u.DistrictRepo.UpdateDistrict(district)
-	if err != nil {
+	var session mongo.Session
+
+	if session, err = u.UnitRepo.Client.StartSession(); err != nil {
+		zap.S().Error(err)
+		return nil, errGeneral
+	}
+
+	if err = session.StartTransaction(); err != nil {
+		zap.S().Error(err)
+		return nil, errGeneral
+	}
+
+	if err = mongo.WithSession(context.TODO(), session, func(sc mongo.SessionContext) error {
+
+		if err = u.DistrictRepo.UpdateDistrict(district); err != nil {
+			zap.S().Error(err)
+			return err
+		}
+
+		resultUnit, err := u.UnitRepo.StoreUnit(dataUnit)
+		if err != nil {
+			return err
+		}
+
+		result = resultUnit
+
+		if err = session.CommitTransaction(sc); err != nil {
+			zap.S().Error(err)
+			return err
+		}
+
+		return nil
+	}); err != nil {
+		if err = session.AbortTransaction(context.Background()); err != nil {
+			zap.S().Error(err)
+			return nil, errGeneral
+		}
 		zap.S().Error(err)
 		return nil, errGeneral
 	}
