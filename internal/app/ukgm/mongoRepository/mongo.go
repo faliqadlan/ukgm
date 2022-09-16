@@ -13,8 +13,8 @@ import (
 
 // MongoRepo implements facultative.Repository using MongoDB
 type MongoRepo struct {
-	client *mongo.Client
-	db     *mongo.Database
+	Client *mongo.Client
+	Db     *mongo.Database
 
 	basicMongo.BasicMongo
 }
@@ -34,8 +34,8 @@ func NewMongoRepo(url, dbName string) (*MongoRepo, error) {
 	}
 
 	result := &MongoRepo{
-		client: client,
-		db:     client.Database(dbName),
+		Client: client,
+		Db:     client.Database(dbName),
 	}
 	result.Init()
 	return result, nil
@@ -43,6 +43,5 @@ func NewMongoRepo(url, dbName string) (*MongoRepo, error) {
 
 // Collection returns collection by the given name
 func (r *MongoRepo) Init() {
-	r.BasicMongo = basicMongo.New(r.db)
-	return
+	r.BasicMongo = basicMongo.New(r.Db)
 }

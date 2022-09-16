@@ -8,6 +8,7 @@ import (
 	mongorepository "ukgm/internal/app/ukgm/mongoRepository"
 	district_service "ukgm/internal/app/ukgm/service/district_service"
 	doctor_service "ukgm/internal/app/ukgm/service/doctorService"
+	unit_service "ukgm/internal/app/ukgm/service/unitService"
 	user_service "ukgm/internal/app/ukgm/service/userService"
 
 	"go.uber.org/zap"
@@ -18,6 +19,8 @@ type ServiceNew struct {
 	*doctor_service.DoctorService
 	*district_service.DistrictService
 	user_service.UserServiceColl
+	UnitSrvStoreData StoreDataSrv
+	UnitSrvGetList   GetListsrv
 }
 
 func ServiceNewDeclare() (result *ServiceNew, err error) {
@@ -53,6 +56,8 @@ func (s *ServiceNew) Init() {
 	s.DoctorService = doctor_service.New(s.Repo)
 	s.DistrictService = district_service.New(s.Repo)
 	s.UserServiceColl = user_service.New(s.Repo)
+	s.UnitSrvStoreData = unit_service.New(s.Repo)
+	s.UnitSrvGetList = unit_service.New(s.Repo)
 }
 
 func MongoDeclareForTesting() (repo *mongorepository.MongoRepo, err error) {
