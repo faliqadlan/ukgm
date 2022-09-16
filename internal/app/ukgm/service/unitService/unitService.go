@@ -33,7 +33,6 @@ func (u *UnitService) StoreData(data interface{}, auth *auth.Token) (result inte
 
 	errGeneral := fmt.Errorf("failed to store new unit")
 	var ctx = context.Background()
-	var client = u.UnitRepo.Client
 	var session mongo.Session
 
 	var dataUnit = &entities.Unit{}
@@ -75,8 +74,7 @@ func (u *UnitService) StoreData(data interface{}, auth *auth.Token) (result inte
 		return nil, fmt.Errorf("unit with name %v in district %v is already available", dataUnit.Name, district.Name)
 	}
 
-	defer client.Disconnect(ctx)
-	if session, err = client.StartSession(); err != nil {
+	if session, err = u.UnitRepo.Client.StartSession(); err != nil {
 		zap.S().Error(err)
 		return nil, errGeneral
 	}

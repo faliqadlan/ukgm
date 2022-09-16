@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"os"
@@ -48,6 +49,7 @@ func main() {
 	if err != nil {
 		log.Panic(err)
 	}
+	defer newService.Repo.Client.Disconnect(context.Background())
 
 	loginApi := login_handler.NewLoginApi(firebaseApi)
 
