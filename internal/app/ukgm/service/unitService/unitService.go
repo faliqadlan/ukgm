@@ -36,7 +36,13 @@ func (u *UnitService) StoreData(data interface{}, auth *auth.Token) (result inte
 	var client = u.UnitRepo.Client
 	var session mongo.Session
 
-	dataUnit := data.(entities.Unit)
+	var dataUnit = &entities.Unit{}
+
+	dataUnit, ok := data.(*entities.Unit)
+	if !ok {
+
+		dataUnit = data.(*entities.Unit)
+	}
 
 	dataUnit.Timestamp.CreateNew(auth)
 
@@ -83,7 +89,7 @@ func (u *UnitService) StoreData(data interface{}, auth *auth.Token) (result inte
 
 	if err = mongo.WithSession(ctx, session, func(sc mongo.SessionContext) error {
 
-		resultUnit, err := u.UnitRepo.StoreUnit(&dataUnit, sc)
+		resultUnit, err := u.UnitRepo.StoreUnit(dataUnit, sc)
 
 		if err != nil {
 			zap.S().Error(err)
@@ -131,3 +137,10 @@ func (u *UnitService) GetList(input ...string) (result interface{}, err error) {
 
 	return res, nil
 }
+
+// func (u *UnitService) GetDetail(input ...string) (result interface{}, err error) {
+
+// 	var filter = bson.M{
+// 		"timestamp.deleted_at": nil,
+// 	}
+// }

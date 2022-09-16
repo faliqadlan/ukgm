@@ -9,3 +9,7 @@ type StoreDataSrv interface {
 type GetListsrv interface {
 	GetList(input ...string) (result interface{}, err error)
 }
+
+type GetDetailSrv interface {
+	GetDetail(input ...string) (result interface{}, err error)
+}

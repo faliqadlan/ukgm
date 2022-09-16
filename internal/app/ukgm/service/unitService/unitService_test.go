@@ -45,7 +45,7 @@ func TestStoreUnit(t *testing.T) {
 	srv := New(repo)
 
 	t.Run("success store unit", func(t *testing.T) {
-		unit := entities.Unit{
+		unit := &entities.Unit{
 			DistrictID: "631dd39ef9c8ba488679be28",
 			Name:       "unit 3 test",
 		}
