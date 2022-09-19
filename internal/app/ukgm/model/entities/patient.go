@@ -42,3 +42,14 @@ func (p *Patient) ToPatientList() *PatientList {
 		Condition:    p.LastDiagnose.Condition,
 	}
 }
+
+func (p *Patient) GetSearchableField() (result []string) {
+	if p == nil {
+		p = &Patient{}
+	}
+	result, err := utils.GetSearchableField(p)
+	if err != nil {
+		result = []string{}
+	}
+	return
+}
