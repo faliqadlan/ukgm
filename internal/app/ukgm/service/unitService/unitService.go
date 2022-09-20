@@ -8,6 +8,7 @@ import (
 	mongorepository "ukgm/internal/app/ukgm/mongoRepository"
 	districtrepo "ukgm/internal/app/ukgm/mongoRepository/districtRepo"
 	unit_repo "ukgm/internal/app/ukgm/mongoRepository/unitRepo"
+	"ukgm/internal/app/utils"
 
 	"firebase.google.com/go/auth"
 	"go.mongodb.org/mongo-driver/bson"
@@ -93,7 +94,15 @@ func (u *UnitService) StoreData(data interface{}, auth *auth.Token) (result inte
 			return errGeneral
 		}
 
-		district.Units = append(district.Units, resultUnit)
+		mapUnit := make(map[string]*entities.Unit)
+
+		mapUnit[utils.ObjectIDHex(resultUnit.ID)] = resultUnit
+
+		if district.Units == nil {
+			district.Units = mapUnit
+		} else {
+			district.Units[utils.ObjectIDHex(resultUnit.ID)] = resultUnit
+		}
 
 		result = resultUnit
 

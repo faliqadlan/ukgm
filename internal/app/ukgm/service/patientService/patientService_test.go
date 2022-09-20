@@ -5,9 +5,12 @@ import (
 	"log"
 	"net/url"
 	"testing"
+	"time"
+	"ukgm/internal/app/config"
 	"ukgm/internal/app/config/env"
 	"ukgm/internal/app/ukgm/model/entities"
 	mongorepository "ukgm/internal/app/ukgm/mongoRepository"
+	"ukgm/internal/app/utils"
 
 	"firebase.google.com/go/auth"
 	"github.com/go-playground/assert"
@@ -29,19 +32,34 @@ func MongoDeclareForTesting() (repo *mongorepository.MongoRepo, err error) {
 	return
 }
 
-func TestStorePatirnt(t *testing.T) {
+func init() {
+	config.SetupLogger()
+}
+
+func TestStorePatient(t *testing.T) {
 	repo, err := MongoDeclareForTesting()
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	srv := New(repo)
+	t.Log(srv)
+
+	loc, err := time.LoadLocation("Asia/Jakarta")
+	t.Log(err)
+
+	dob := time.Now().Local().In(loc)
+	dob = utils.StartOfDay(dob)
+	t.Log(dob)
+	t.Log(dob.Location())
 
 	t.Run("failed store patient", func(t *testing.T) {
 		patient := &entities.Patient{
 			DistrictID: "631dd39ef9c8ba488679be28",
-			UnitID:     "6323169e850369d097c4fd52",
+			UnitID:     "632914b5b3927d861c734ac4",
 			Name:       "patient 1",
+			Dob:        &dob,
+			Gender:     "netral",
 		}
 
 		res, err := srv.StoreData(patient, &auth.Token{})
@@ -54,8 +72,10 @@ func TestStorePatirnt(t *testing.T) {
 	t.Run("success store patient", func(t *testing.T) {
 		patient := &entities.Patient{
 			DistrictID: "631dd39ef9c8ba488679be28",
-			UnitID:     "6323169e850369d097c4fd53",
+			UnitID:     "632914b5b3927d861c734ac5",
 			Name:       "patient tiga",
+			Dob:        &dob,
+			Gender:     "netral",
 		}
 
 		res, err := srv.StoreData(patient, &auth.Token{})

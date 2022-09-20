@@ -42,7 +42,26 @@ func (p *PatientService) StoreData(data interface{}, auth *auth.Token) (result i
 		return nil, errGeneral
 	}
 
+	// mrNumber, err := p.PatientRepo.GenerateMRNumber(ctx)
+	// if err != nil {
+	// 	zap.S().Error(err)
+	// 	return nil, errGeneral
+	// }
+	// dataPat.MrNumber = mrNumber
+
 	dataPat.Timestamp.CreateNew(auth)
+
+	filter := bson.M{
+		"timestamp.deleted_at": nil,
+		"name":                 dataPat.Name,
+		"dob":                  dataPat.Dob,
+	}
+
+	_, errAvailable := p.PatientRepo.Showpatient(filter, nil, ctx)
+	if errAvailable == nil {
+		zap.S().Error(err)
+		return nil, fmt.Errorf("patient with name %v and date of birth %v is already available", dataPat.Name, dataPat.Dob.Format("2006-01-02"))
+	}
 
 	if session, err = p.PatientRepo.Client.StartSession(); err != nil {
 		zap.S().Error(err)
@@ -98,30 +117,38 @@ func (p *PatientService) StoreData(data interface{}, auth *auth.Token) (result i
 			return errGeneral
 		}
 
-		unit.Patients = append(unit.Patients, resultPat)
+		mapPatient := make(map[string]*entities.Patient)
+		mapPatient[utils.ObjectIDHex(resultPat.ID)] = resultPat
+
+		if unit.Patients == nil {
+			unit.Patients = mapPatient
+		} else {
+			unit.Patients[utils.ObjectIDHex(resultPat.ID)] = resultPat
+		}
 
 		if err = p.UnitRepo.UpdateUnit(unit, sc); err != nil {
 			zap.S().Error(err)
 			return errGeneral
 		}
 
-		for i, unitD := range district.Units {
-			if utils.ObjectIDHex(unitD.ID) == utils.ObjectIDHex(dataPat.UnitID) {
-				district.Units[i].Patients = append(district.Units[i].Patients, resultPat)
-				break
-			}
+		if district.Units[resultPat.UnitID].Patients == nil {
+			district.Units[resultPat.UnitID].Patients = mapPatient
+		} else {
+			district.Units[resultPat.UnitID].Patients[utils.ObjectIDHex(resultPat.ID)] = resultPat
 		}
 
 		if err = p.DistrictRepo.UpdateDistrict(district, sc); err != nil {
 			zap.S().Error(err)
 			return errGeneral
 		}
-		// err = p.DistrictRepo.UpdateDistrict(district, sc)
-		// err = fmt.Errorf("unable to update district: %v", err)
-		// if err != nil {
-		// 	zap.S().Error(err)
-		// 	return errGeneral
-		// }
+
+		// for test session error
+		err = p.DistrictRepo.UpdateDistrict(district, sc)
+		err = fmt.Errorf("unable to update district: %v", err)
+		if err != nil {
+			zap.S().Error(err)
+			return errGeneral
+		}
 
 		if err = session.CommitTransaction(sc); err != nil {
 			zap.S().Error(err)

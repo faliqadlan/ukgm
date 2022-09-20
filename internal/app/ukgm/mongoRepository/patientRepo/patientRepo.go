@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strconv"
 	"ukgm/internal/app/ukgm/model/entities"
 	"ukgm/internal/app/ukgm/model/request"
 	mongorepository "ukgm/internal/app/ukgm/mongoRepository"
@@ -31,6 +32,22 @@ func (p *PatientRepo) StorePatient(data *entities.Patient, ctx context.Context) 
 	}
 	data.ID = utils.ObjectIDHex(mongoResult.InsertedID)
 	return data, nil
+}
+
+func (p *PatientRepo) GenerateMRNumber(ctx context.Context) (result string, err error) {
+	total, err := p.Count(ctx, PatientCollection, nil)
+	if err != nil {
+		zap.S().Error(err)
+		return "", err
+	}
+	total++
+	mrNumber := strconv.Itoa(total)
+	ind := 4 - len(mrNumber)
+	for index := 0; index < ind; index++ {
+		mrNumber = "0" + mrNumber
+	}
+	result = "CLST" + mrNumber
+	return result, nil
 }
 
 func (p *PatientRepo) Showpatient(filter bson.M, options *options.FindOneOptions, ctx context.Context) (result *entities.Patient, err error) {
