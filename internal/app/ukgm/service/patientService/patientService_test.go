@@ -73,7 +73,7 @@ func TestStorePatient(t *testing.T) {
 		patient := &entities.Patient{
 			DistrictID: "631dd39ef9c8ba488679be28",
 			UnitID:     "632914b5b3927d861c734ac5",
-			Name:       "patient tiga",
+			Name:       "patient empat",
 			Dob:        &dob,
 			Gender:     "netral",
 		}

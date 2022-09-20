@@ -42,12 +42,12 @@ func (p *PatientService) StoreData(data interface{}, auth *auth.Token) (result i
 		return nil, errGeneral
 	}
 
-	// mrNumber, err := p.PatientRepo.GenerateMRNumber(ctx)
-	// if err != nil {
-	// 	zap.S().Error(err)
-	// 	return nil, errGeneral
-	// }
-	// dataPat.MrNumber = mrNumber
+	mrNumber, err := p.PatientRepo.GenerateMRNumber(ctx)
+	if err != nil {
+		zap.S().Error(err)
+		return nil, errGeneral
+	}
+	dataPat.MrNumber = mrNumber
 
 	dataPat.Timestamp.CreateNew(auth)
 
@@ -143,12 +143,12 @@ func (p *PatientService) StoreData(data interface{}, auth *auth.Token) (result i
 		}
 
 		// for test session error
-		err = p.DistrictRepo.UpdateDistrict(district, sc)
-		err = fmt.Errorf("unable to update district: %v", err)
-		if err != nil {
-			zap.S().Error(err)
-			return errGeneral
-		}
+		// err = p.DistrictRepo.UpdateDistrict(district, sc)
+		// err = fmt.Errorf("unable to update district: %v", err)
+		// if err != nil {
+		// 	zap.S().Error(err)
+		// 	return errGeneral
+		// }
 
 		if err = session.CommitTransaction(sc); err != nil {
 			zap.S().Error(err)
@@ -168,3 +168,4 @@ func (p *PatientService) StoreData(data interface{}, auth *auth.Token) (result i
 
 	return result, nil
 }
+
