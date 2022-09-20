@@ -3,6 +3,7 @@ package patient_repo
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"ukgm/internal/app/ukgm/model/entities"
 	"ukgm/internal/app/ukgm/model/request"
@@ -10,6 +11,7 @@ import (
 	"ukgm/internal/app/utils"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.uber.org/zap"
 )
@@ -76,6 +78,29 @@ func (p *PatientRepo) FetchIndexPatient(ctx context.Context, pr *request.PageReq
 			return nil, err
 		}
 		result = append(result, *elem.ToPatientList())
+	}
+	return
+}
+
+func (p *PatientRepo) UpdatePatient(data *entities.Patient, ctx context.Context) (err error) {
+	update := *data
+	update.ID = nil
+
+	oId, err := primitive.ObjectIDFromHex(utils.ObjectIDHex(data.ID))
+	if err != nil {
+		zap.S().Error(err)
+		return errors.New("error in update district")
+	}
+
+	filter := bson.M{
+		"timestamp.deleted_at": nil,
+		"_id":                  oId,
+	}
+
+	_, err = p.Update(ctx, PatientCollection, filter, update, nil)
+	if err != nil {
+		zap.S().Error(err)
+		return
 	}
 	return
 }

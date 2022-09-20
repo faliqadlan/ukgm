@@ -39,7 +39,6 @@ func (u *UnitService) StoreData(data interface{}, auth *auth.Token) (result inte
 
 	dataUnit, ok := data.(*entities.Unit)
 	if !ok {
-
 		dataUnit = data.(*entities.Unit)
 	}
 
