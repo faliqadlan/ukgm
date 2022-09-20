@@ -32,14 +32,29 @@ type PatientList struct {
 }
 
 func (p *Patient) ToPatientList() *PatientList {
+
+	var dobS, ldS, cond string
+
+	if p.Dob != nil {
+		dobS = p.Dob.Local().Format(ukgm.TimeFormat)
+	}
+
+	if p.LastDiagnose != nil {
+		ldS = p.LastDiagnose.UpdatedAt.Local().Format(ukgm.TimeFormat)
+	}
+
+	if p.LastDiagnose != nil {
+		cond = p.LastDiagnose.Condition
+	}
+
 	return &PatientList{
 		Id:           utils.ObjectIDHex(p.ID),
 		MrNumber:     p.MrNumber,
 		NamePatient:  p.Name,
 		NameUnit:     p.NameUnit,
-		Dob:          p.Dob.Local().Format(ukgm.TimeFormat),
-		LastDiagnose: p.LastDiagnose.UpdatedAt.Local().Format(ukgm.TimeFormat),
-		Condition:    p.LastDiagnose.Condition,
+		Dob:          dobS,
+		LastDiagnose: ldS,
+		Condition:    cond,
 	}
 }
 

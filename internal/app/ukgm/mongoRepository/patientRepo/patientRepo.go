@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"strconv"
 	"ukgm/internal/app/ukgm/model/entities"
 	"ukgm/internal/app/ukgm/model/request"
@@ -69,13 +70,13 @@ func (p *PatientRepo) Showpatient(filter bson.M, options *options.FindOneOptions
 	return result, nil
 }
 
-func (p *PatientRepo) FetchIndexPatient(ctx context.Context, pr *request.PageRequest) (result []entities.PatientList, err error) {
+func (p *PatientRepo) FetchIndexPatient(ctx context.Context, pr *request.PageRequest) (result []entities.PatientList, count int, err error) {
 	result = []entities.PatientList{}
 	var patientTemp *entities.Patient
 
 	filter, options := pr.QueryPipeline(patientTemp.GetSearchableField())
-
-	count, err := p.Count(ctx, PatientCollection, filter.Map())
+	log.Println(filter)
+	count, err = p.Count(ctx, PatientCollection, filter.Map())
 	if count == 0 || err != nil {
 		if err != nil {
 			zap.S().Error(err)
@@ -90,9 +91,9 @@ func (p *PatientRepo) FetchIndexPatient(ctx context.Context, pr *request.PageReq
 	}
 	for getCursor.Next(ctx) {
 		var elem entities.Patient
-		if err := getCursor.Decode(&elem); err != nil {
+		if err = getCursor.Decode(&elem); err != nil {
 			zap.S().Error(err)
-			return nil, err
+			return
 		}
 		result = append(result, *elem.ToPatientList())
 	}

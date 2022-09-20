@@ -9,6 +9,7 @@ import (
 	"ukgm/internal/app/config"
 	"ukgm/internal/app/config/env"
 	"ukgm/internal/app/ukgm/model/entities"
+	"ukgm/internal/app/ukgm/model/request"
 	mongorepository "ukgm/internal/app/ukgm/mongoRepository"
 	"ukgm/internal/app/utils"
 
@@ -73,7 +74,7 @@ func TestStorePatient(t *testing.T) {
 		patient := &entities.Patient{
 			DistrictID: "631dd39ef9c8ba488679be28",
 			UnitID:     "632914b5b3927d861c734ac5",
-			Name:       "patient empat",
+			Name:       "budi",
 			Dob:        &dob,
 			Gender:     "netral",
 		}
@@ -82,5 +83,29 @@ func TestStorePatient(t *testing.T) {
 		t.Log(err)
 		assert.Equal(t, err, nil)
 		t.Log(res)
+	})
+}
+
+func TestFetchIndexPatient(t *testing.T) {
+	repo, err := MongoDeclareForTesting()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	srv := New(repo)
+
+	t.Run("success", func(t *testing.T) {
+
+		pgReq := &request.PageRequest{
+			// Search: "sat",
+			PerPage: 10,
+			// Sorts: []request.Sort{{Value: "asc", Option: "name_patient"}},
+		}
+
+		res, count, err := srv.FetchIndexPatients(pgReq)
+		assert.Equal(t, err, nil)
+		t.Log(count)
+		t.Log(res)
+
 	})
 }

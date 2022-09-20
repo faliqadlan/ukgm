@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"ukgm/internal/app/ukgm/model/entities"
+	"ukgm/internal/app/ukgm/model/request"
 	mongorepository "ukgm/internal/app/ukgm/mongoRepository"
 	districtrepo "ukgm/internal/app/ukgm/mongoRepository/districtRepo"
 	patient_repo "ukgm/internal/app/ukgm/mongoRepository/patientRepo"
@@ -169,3 +170,6 @@ func (p *PatientService) StoreData(data interface{}, auth *auth.Token) (result i
 	return result, nil
 }
 
+func (p *PatientService) FetchIndexPatients(pr *request.PageRequest) (result []entities.PatientList, count int, err error) {
+	return p.PatientRepo.FetchIndexPatient(context.TODO(), pr)
+}
