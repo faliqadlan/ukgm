@@ -87,6 +87,7 @@ func TestStorePatient(t *testing.T) {
 }
 
 func TestFetchIndexPatient(t *testing.T) {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	repo, err := MongoDeclareForTesting()
 	if err != nil {
 		t.Fatal(err)
@@ -97,15 +98,17 @@ func TestFetchIndexPatient(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 
 		pgReq := &request.PageRequest{
-			// Search: "sat",
-			PerPage: 10,
-			// Sorts: []request.Sort{{Value: "asc", Option: "name_patient"}},
+			Search:   "satu",
+			// PerPage:  10,
+			// Paginate: 1,
+			// Page:     1,
+			Sorts:    []request.Sort{{Value: "asc", Option: "name"}},
 		}
 
 		res, count, err := srv.FetchIndexPatients(pgReq)
 		assert.Equal(t, err, nil)
 		t.Log(count)
-		t.Log(res)
+		t.Log(res, len(res))
 
 	})
 }

@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"strconv"
 	"ukgm/internal/app/ukgm/model/entities"
 	"ukgm/internal/app/ukgm/model/request"
@@ -73,9 +72,7 @@ func (p *PatientRepo) Showpatient(filter bson.M, options *options.FindOneOptions
 func (p *PatientRepo) FetchIndexPatient(ctx context.Context, pr *request.PageRequest) (result []entities.PatientList, count int, err error) {
 	result = []entities.PatientList{}
 	var patientTemp *entities.Patient
-
 	filter, options := pr.QueryPipeline(patientTemp.GetSearchableField())
-	log.Println(filter)
 	count, err = p.Count(ctx, PatientCollection, filter.Map())
 	if count == 0 || err != nil {
 		if err != nil {
