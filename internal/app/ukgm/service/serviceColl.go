@@ -15,5 +15,5 @@ type GetDetailSrv interface {
 }
 
 type FetchIndexSrv interface {
-	FetchIndex(input ...interface{}) (result interface{}, err error)
+	FetchIndex(input ...interface{}) (result interface{}, count int, err error)
 }

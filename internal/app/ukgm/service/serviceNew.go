@@ -62,7 +62,7 @@ func (s *ServiceNew) Init() {
 	s.UnitSrvStoreData = unit_service.New(s.Repo)
 	s.UnitSrvGetList = unit_service.New(s.Repo)
 	s.PatientSrvStoreData = patient_service.New(s.Repo)
-
+	s.PatientSrvFetchIndex = patient_service.New(s.Repo)
 }
 
 func MongoDeclareForTesting() (repo *mongorepository.MongoRepo, err error) {

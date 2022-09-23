@@ -44,6 +44,7 @@ func main() {
 	r.Use(cors.Handler)
 	r.Use(middlewareSrv.CommonMiddleware)
 	r.Use(middlewareSrv.JWTMiddleware)
+	// r.Use(middlewareSrv)
 
 	newService, err := service.ServiceNewDeclare()
 	if err != nil {

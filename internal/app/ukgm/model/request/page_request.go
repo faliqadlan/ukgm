@@ -325,8 +325,8 @@ func PageRequestNewCtx(next http.Handler) http.Handler {
 		pageRequest := &PageRequest{
 			Filters:  make([]Filter, 0),
 			Sorts:    make([]Sort, 0),
-			Page:     1,
-			PerPage:  10,
+			Page:     0,
+			PerPage:  0,
 			Paginate: 0,
 			Search:   "",
 		}
