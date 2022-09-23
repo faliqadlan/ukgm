@@ -3,7 +3,6 @@ package request
 import (
 	"context"
 	"encoding/json"
-	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -198,7 +197,6 @@ func (s *Sort) ToBson() (sort bson.D) {
 }
 
 func (pr *PageRequest) QueryPipeline(searchFields []string) (filter bson.D, findOption *options.FindOptions) {
-	log.Println(searchFields)
 	filter = primitive.D{}
 	var (
 		allFilter       primitive.A   = primitive.A{}
@@ -238,8 +236,6 @@ func (pr *PageRequest) QueryPipeline(searchFields []string) (filter bson.D, find
 	if len(allFilter) > 0 {
 		filter = append(filter, primitive.E{Key: "$and", Value: allFilter})
 	}
-
-	log.Println(filter)
 
 	options := options.Find()
 	if len(pr.Sorts) > 0 {

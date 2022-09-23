@@ -98,17 +98,16 @@ func TestFetchIndexPatient(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 
 		pgReq := &request.PageRequest{
-			Search:   "satu",
+			Search: "satu",
 			// PerPage:  10,
 			// Paginate: 1,
 			// Page:     1,
-			Sorts:    []request.Sort{{Value: "asc", Option: "name"}},
+			Sorts: []request.Sort{{Value: "asc", Option: "name"}},
 		}
 
-		res, count, err := srv.FetchIndexPatients(pgReq)
+		res, err := srv.FetchIndex(pgReq)
 		assert.Equal(t, err, nil)
-		t.Log(count)
-		t.Log(res, len(res))
+		t.Log(res, res)
 
 	})
 }

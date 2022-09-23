@@ -13,3 +13,7 @@ type GetListsrv interface {
 type GetDetailSrv interface {
 	GetDetail(input ...string) (result interface{}, err error)
 }
+
+type FetchIndexSrv interface {
+	FetchIndex(input ...interface{}) (result interface{}, err error)
+}

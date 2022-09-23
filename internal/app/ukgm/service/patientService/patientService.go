@@ -3,6 +3,7 @@ package patient_service
 import (
 	"context"
 	"fmt"
+	"log"
 	"ukgm/internal/app/ukgm/model/entities"
 	"ukgm/internal/app/ukgm/model/request"
 	mongorepository "ukgm/internal/app/ukgm/mongoRepository"
@@ -170,6 +171,12 @@ func (p *PatientService) StoreData(data interface{}, auth *auth.Token) (result i
 	return result, nil
 }
 
-func (p *PatientService) FetchIndexPatients(pr *request.PageRequest) (result []entities.PatientList, count int, err error) {
-	return p.PatientRepo.FetchIndexPatient(context.TODO(), pr)
+func (p *PatientService) FetchIndex(input ...interface{}) (result interface{}, err error) {
+
+	pr := input[0].(*request.PageRequest)
+
+	res, count, err := p.PatientRepo.FetchIndexPatient(context.TODO(), pr)
+	log.Println(count)
+
+	return res, err
 }
