@@ -233,7 +233,9 @@ func (pr *PageRequest) QueryPipeline(searchFields []string) (filter bson.D, find
 		allFilter = append(allFilter, bson.D{primitive.E{Key: "$or", Value: unionFilter}})
 	}
 
-	filter = append(filter, primitive.E{Key: "$and", Value: allFilter})
+	if len(allFilter) > 0 {
+		filter = append(filter, primitive.E{Key: "$and", Value: allFilter})
+	}
 
 	options := options.Find()
 	if len(pr.Sorts) > 0 {
@@ -267,6 +269,7 @@ func (pr *PageRequest) QueryPipeline(searchFields []string) (filter bson.D, find
 		options.SetProjection(filter)
 	}
 	findOption = options
+
 	return
 }
 
@@ -322,8 +325,8 @@ func PageRequestNewCtx(next http.Handler) http.Handler {
 		pageRequest := &PageRequest{
 			Filters:  make([]Filter, 0),
 			Sorts:    make([]Sort, 0),
-			Page:     1,
-			PerPage:  10,
+			Page:     0,
+			PerPage:  0,
 			Paginate: 0,
 			Search:   "",
 		}

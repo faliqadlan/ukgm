@@ -8,6 +8,7 @@ import (
 	mongorepository "ukgm/internal/app/ukgm/mongoRepository"
 	district_service "ukgm/internal/app/ukgm/service/district_service"
 	doctor_service "ukgm/internal/app/ukgm/service/doctorService"
+	patient_service "ukgm/internal/app/ukgm/service/patientService"
 	unit_service "ukgm/internal/app/ukgm/service/unitService"
 	user_service "ukgm/internal/app/ukgm/service/userService"
 
@@ -19,8 +20,10 @@ type ServiceNew struct {
 	*doctor_service.DoctorService
 	*district_service.DistrictService
 	user_service.UserServiceColl
-	UnitSrvStoreData StoreDataSrv
-	UnitSrvGetList   GetListsrv
+	UnitSrvStoreData     StoreDataSrv
+	UnitSrvGetList       GetListsrv
+	PatientSrvStoreData  StoreDataSrv
+	PatientSrvFetchIndex FetchIndexSrv
 }
 
 func ServiceNewDeclare() (result *ServiceNew, err error) {
@@ -58,6 +61,8 @@ func (s *ServiceNew) Init() {
 	s.UserServiceColl = user_service.New(s.Repo)
 	s.UnitSrvStoreData = unit_service.New(s.Repo)
 	s.UnitSrvGetList = unit_service.New(s.Repo)
+	s.PatientSrvStoreData = patient_service.New(s.Repo)
+	s.PatientSrvFetchIndex = patient_service.New(s.Repo)
 }
 
 func MongoDeclareForTesting() (repo *mongorepository.MongoRepo, err error) {
