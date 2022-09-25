@@ -52,13 +52,20 @@ func (m *Middleware) JWTMiddleware(next http.Handler) http.Handler {
 			token = splitToken[1]
 		}
 
+		authToken, err := m.firebaseApi.EncodeToken(token)
+		if err == nil {
+			ctx := context.WithValue(r.Context(), GetAuthCtxKey(), authToken)
+			next.ServeHTTP(w, r.WithContext(ctx))
+			return
+		}
+
 		tokenID, err := m.firebaseApi.SignInWithCustomToken(token)
 		if err != nil {
 			zap.S().Error(err)
 			responses.SendErrorJSON(responses.PrintErrorMessage(errors.New("token is invalid")), w)
 		}
 
-		authToken, err := m.firebaseApi.EncodeToken(tokenID)
+		authToken, err = m.firebaseApi.EncodeToken(tokenID)
 		if err != nil {
 			zap.S().Error(err)
 			responses.SendErrorJSON(responses.PrintErrorMessage(errors.New("token is invalid")), w)
