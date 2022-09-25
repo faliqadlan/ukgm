@@ -12,6 +12,7 @@ require (
 	github.com/go-chi/chi v1.5.4
 	github.com/go-chi/cors v1.2.1
 	github.com/go-errors/errors v1.4.2 // indirect
+	github.com/go-playground/assert v1.2.1
 	github.com/go-playground/assert/v2 v2.2.0
 	github.com/iman231/go-help v0.0.0-20200106030522-d18e6103e31b
 	github.com/jinzhu/now v1.1.5
