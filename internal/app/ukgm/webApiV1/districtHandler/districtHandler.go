@@ -29,7 +29,7 @@ func (d *DistrictApi) DistrictCtx(next http.Handler) http.Handler {
 
 func (d *DistrictApi) ShowDistrictbyID(w http.ResponseWriter, r *http.Request) {
 	// get data context middleware
-	district := r.Context().Value(request.GetDistrictCtxKey()).(*entities.District)
+	district := r.Context().Value(request.GetDistrictCtxKey()).(*entities.DistrictResponse)
 
 	responses.SendJSON(responses.NewResponse(district), w)
 }

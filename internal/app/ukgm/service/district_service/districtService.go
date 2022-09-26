@@ -10,7 +10,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func (d *DistrictService) ShowDistrictbyID(id string) (result *entities.District, err error) {
+func (d *DistrictService) ShowDistrictbyID(id string) (result *entities.DistrictResponse, err error) {
 	oID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		zap.S().Error(err)
@@ -22,11 +22,13 @@ func (d *DistrictService) ShowDistrictbyID(id string) (result *entities.District
 		"_id":                  oID,
 	}
 
-	result, err = d.ShowDistrict(filter, nil)
+	res, err := d.ShowDistrict(filter, nil)
 	if err != nil {
 		zap.S().Error(err)
 		return nil, errors.New("error in show district")
 	}
+
+	result = res.ToDistrictResponse()
 
 	return result, nil
 }

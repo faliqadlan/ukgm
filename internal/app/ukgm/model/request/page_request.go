@@ -348,6 +348,7 @@ func PageRequestNewCtx(next http.Handler) http.Handler {
 			pageRequest.Search = query.Get("search")
 		}
 
+		query.Add("sort", "name|asc")
 		if query.Get("sort") != "" {
 			srts := strings.Split(query.Get("sort"), "|")
 			if len(srts) >= 2 {
@@ -362,6 +363,11 @@ func PageRequestNewCtx(next http.Handler) http.Handler {
 				json.Unmarshal([]byte(v), &filter)
 				pageRequest.Filters = append(pageRequest.Filters, filter)
 			}
+		}
+
+		if query.Get("district_id") != "" {
+			districtId := query.Get("district_id")
+			pageRequest.Filters = append(pageRequest.Filters, Filter{Option: "district_id", Operator: "=", Value: districtId})
 		}
 
 		//Fetching sorts data

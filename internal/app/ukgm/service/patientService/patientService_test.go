@@ -102,7 +102,7 @@ func TestFetchIndexPatient(t *testing.T) {
 			// PerPage:  10,
 			// Paginate: 1,
 			// Page:     1,
-			// Sorts: []request.Sort{{Value: "asc", Option: "name"}},
+			Sorts: []request.Sort{{Value: "asc", Option: "name"}},
 		}
 
 		res, count, err := srv.FetchIndex(pgReq)
