@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+	"time"
 	"ukgm/internal/app/ukgm/model/entities"
 	"ukgm/internal/app/ukgm/model/request"
 	mongorepository "ukgm/internal/app/ukgm/mongoRepository"
@@ -35,7 +36,17 @@ func (p *PatientRepo) StorePatient(data *entities.Patient, ctx context.Context) 
 }
 
 func (p *PatientRepo) GenerateMRNumber(ctx context.Context) (result string, err error) {
-	total, err := p.Count(ctx, PatientCollection, nil)
+	location, err := time.LoadLocation("Asia/Jakarta")
+	if err != nil {
+		return "", err
+	}
+	total, err := p.Count(ctx, PatientCollection, bson.M{
+		"timestamp.created_at": bson.M{
+			"$gte": primitive.NewDateTimeFromTime(utils.StartOfDay(time.Now().In(location).Local())),
+			"$lt":  primitive.NewDateTimeFromTime(utils.EndOfDay(time.Now().In(location).Local())),
+		},
+	})
+
 	if err != nil {
 		zap.S().Error(err)
 		return "", err
@@ -46,7 +57,8 @@ func (p *PatientRepo) GenerateMRNumber(ctx context.Context) (result string, err 
 	for index := 0; index < ind; index++ {
 		mrNumber = "0" + mrNumber
 	}
-	result = "CLST" + mrNumber
+
+	result = "CLST" + time.Now().Format("060102") + mrNumber
 	return result, nil
 }
 

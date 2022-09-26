@@ -129,7 +129,7 @@ func SetResponsePagination(pageRequest *PageRequest, data interface{}, count int
 			},
 		},
 		CurrentPage: pageRequest.Page,
-		From:        (pageRequest.Page-1)*10 + 1,
+		From:        (pageRequest.Page-1)*int64(pageRequest.PerPage),
 		LastPage:    int64(math.Ceil(float64(count) / float64(pageRequest.PerPage))),
 		PerPage:     pageRequest.PerPage,
 		To:          int64(int(pageRequest.Page) * int(pageRequest.PerPage)),
