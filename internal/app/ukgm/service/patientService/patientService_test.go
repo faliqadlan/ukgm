@@ -73,10 +73,10 @@ func TestStorePatient(t *testing.T) {
 	t.Run("success store patient", func(t *testing.T) {
 		patient := &entities.Patient{
 			DistrictID: "631dd39ef9c8ba488679be28",
-			UnitID:     "632914b5b3927d861c734ac5",
-			Name:       "budi",
+			UnitID:     "632914a7ff406c851d8ec418",
+			Name:       "budi d",
 			Dob:        &dob,
-			Gender:     "netral",
+			Gender:     "P",
 		}
 
 		res, err := srv.StoreData(patient, &auth.Token{})
@@ -104,6 +104,8 @@ func TestFetchIndexPatient(t *testing.T) {
 			// Page:     1,
 			Sorts: []request.Sort{{Value: "asc", Option: "name"}},
 		}
+
+		pgReq.Filters = append(pgReq.Filters, request.Filter{Option: "unit_id", Operator: "=", Value: "632914a7ff406c851d8ec418"})
 
 		res, count, err := srv.FetchIndex(pgReq)
 		assert.Equal(t, err, nil)

@@ -8,8 +8,8 @@ import (
 
 type Patient struct {
 	ID           interface{} `json:"id" bson:"_id,omitempty"`
-	UnitID       string      `json:"unit_id" bson:"_unit_id,omitempty"`
-	DistrictID   string      `json:"district_id" bson:"_district_id,omitempty"`
+	UnitID       string      `json:"unit_id" bson:"unit_id,omitempty"`
+	DistrictID   string      `json:"district_id" bson:"district_id,omitempty"`
 	Name         string      `json:"name" bson:"name" part:"main" properties:"searchable"`
 	NameUnit     string      `json:"name_unit" bson:"name_unit"`
 	MrNumber     string      `json:"mr_number" bson:"mr_number"`

@@ -366,8 +366,13 @@ func PageRequestNewCtx(next http.Handler) http.Handler {
 		}
 
 		if query.Get("district_id") != "" {
-			districtId := query.Get("district_id")
-			pageRequest.Filters = append(pageRequest.Filters, Filter{Option: "district_id", Operator: "=", Value: districtId})
+			id := query.Get("district_id")
+			pageRequest.Filters = append(pageRequest.Filters, Filter{Option: "district_id", Operator: "=", Value: id})
+		}
+
+		if query.Get("unit_id") != "" {
+			id := query.Get("unit_id")
+			pageRequest.Filters = append(pageRequest.Filters, Filter{Option: "unit_id", Operator: "=", Value: id})
 		}
 
 		//Fetching sorts data
