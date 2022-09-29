@@ -343,6 +343,10 @@ func PageRequestNewCtx(next http.Handler) http.Handler {
 		if query.Get("paginate") != "" {
 			pageRequest.Paginate = 1
 		}
+		name := query.Get("name")
+		if name != "" {
+			query.Add("search", name)
+		}
 
 		if query.Get("search") != "" {
 			pageRequest.Search = query.Get("search")
