@@ -43,7 +43,7 @@ func (p *PatientRepo) GenerateMRNumber(ctx context.Context) (result string, err 
 	total, err := p.Count(ctx, PatientCollection, bson.M{
 		"timestamp.created_at": bson.M{
 			"$gte": primitive.NewDateTimeFromTime(utils.StartOfDay(time.Now().In(location).Local())),
-			"$lt":  primitive.NewDateTimeFromTime(utils.EndOfDay(time.Now().In(location).Local())),
+			"$lte":  primitive.NewDateTimeFromTime(utils.EndOfDay(time.Now().In(location).Local())),
 		},
 	})
 
