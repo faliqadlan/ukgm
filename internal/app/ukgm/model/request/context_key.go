@@ -10,6 +10,7 @@ var (
 	LimitCtxKey       = &CtxKey{"Limit"}
 	LayerCtxKey       = &CtxKey{"Layer"}
 	DistrictCtxKey    = &CtxKey{"District"}
+	DiagnoseCtxKey    = &CtxKey{"Diagnose"}
 )
 
 type (
@@ -20,6 +21,10 @@ type (
 
 func (k *CtxKey) String() string {
 	return fmt.Sprintf("ukgm's context value: %s", k.name)
+}
+
+func GetDiagnoseCtxKey() *CtxKey {
+	return DiagnoseCtxKey
 }
 
 func GetDistrictCtxKey() (result *CtxKey) {
