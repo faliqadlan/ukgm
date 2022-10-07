@@ -6,6 +6,7 @@ import (
 
 	"ukgm/internal/app/config/env"
 	mongorepository "ukgm/internal/app/ukgm/mongoRepository"
+	diagnose_service "ukgm/internal/app/ukgm/service/diagnoseService"
 	district_service "ukgm/internal/app/ukgm/service/district_service"
 	doctor_service "ukgm/internal/app/ukgm/service/doctorService"
 	patient_service "ukgm/internal/app/ukgm/service/patientService"
@@ -24,6 +25,8 @@ type ServiceNew struct {
 	UnitSrvGetList       GetListsrv
 	PatientSrvStoreData  StoreDataSrv
 	PatientSrvFetchIndex FetchIndexSrv
+	DiagnoseSrvStoreData StoreDataSrv
+	DiagnoseSrvGetDetail GetDetailSrv
 }
 
 func ServiceNewDeclare() (result *ServiceNew, err error) {
@@ -63,6 +66,8 @@ func (s *ServiceNew) Init() {
 	s.UnitSrvGetList = unit_service.New(s.Repo)
 	s.PatientSrvStoreData = patient_service.New(s.Repo)
 	s.PatientSrvFetchIndex = patient_service.New(s.Repo)
+	s.DiagnoseSrvStoreData = diagnose_service.New(s.Repo)
+	s.DiagnoseSrvGetDetail = diagnose_service.New(s.Repo)
 }
 
 func MongoDeclareForTesting() (repo *mongorepository.MongoRepo, err error) {
