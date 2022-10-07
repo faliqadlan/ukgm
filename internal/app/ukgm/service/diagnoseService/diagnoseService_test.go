@@ -87,11 +87,28 @@ func TestStoreData(t *testing.T) {
 			Condition:  ukgm.KondisiBaik,
 		}
 
-		dataInput := []interface{}{data, true}
+		dataInput := []interface{}{data, false}
 
 		res, err := srv.StoreData(dataInput, &auth.Token{})
 		t.Log(err)
 		assert.NotEqual(t, err, nil)
+		t.Log(res)
+	})
+}
+
+func TestGetDetail(t *testing.T) {
+	repo, err := MongoDeclareForTesting()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	srv := New(repo)
+	t.Log(srv)
+
+	t.Run("success get data", func(t *testing.T) {
+		res, err := srv.GetDetail("63328dfd6f67b4f7e7fe2b82")
+		t.Log(err)
+		assert.Equal(t, err, nil)
 		t.Log(res)
 	})
 }

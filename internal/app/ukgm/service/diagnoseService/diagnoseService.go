@@ -2,6 +2,7 @@ package diagnose_service
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 	"ukgm/internal/app/ukgm/model/entities"
@@ -68,18 +69,16 @@ func (d *DiagnoseService) StoreData(data interface{}, auth *auth.Token) (result 
 		},
 	}
 	resAvailable, errAvailable := d.DiagnoseRepo.ShowData(filter, nil, ctx)
-
-	if !replace {
-		if errAvailable == nil {
-			zap.S().Error(err)
+	zap.S().Error(errAvailable)
+	if errAvailable == nil {
+		if !replace {
 			return nil, fmt.Errorf("this patient have diagnose data for %v created at %v, are you sure to replace it ?", resAvailable.Timestamp.CreatedAt.Month().String(), resAvailable.Timestamp.CreatedAt.Format("2006-01-02"))
-		}
-	} else {
-		resAvailable.Timestamp.Update(auth)
-		resAvailable.Timestamp.Delete(auth)
-		err := d.DiagnoseRepo.UpdateData(resAvailable, ctx)
-		if err != nil {
-			return nil, errGeneral
+		} else {
+			resAvailable.Timestamp.Delete(auth)
+			err := d.DiagnoseRepo.UpdateData(resAvailable, ctx)
+			if err != nil {
+				return nil, errGeneral
+			}
 		}
 	}
 
@@ -147,6 +146,20 @@ func (d *DiagnoseService) StoreData(data interface{}, auth *auth.Token) (result 
 			return errGeneral
 		}
 
+		// set doctor
+		if district.Doctor != nil {
+			for _, v := range district.Doctor {
+				dataStore.DoctorName = v.Name
+			}
+		}
+
+		// set nurse
+		if district.Nurse != nil {
+			for _, v := range district.Nurse {
+				dataStore.NurseName = v.Name
+			}
+		}
+
 		resultStore, err := d.DiagnoseRepo.StoreData(dataStore, sc)
 		if err != nil {
 			zap.S().Error(err)
@@ -194,5 +207,28 @@ func (d *DiagnoseService) StoreData(data interface{}, auth *auth.Token) (result 
 		zap.S().Error(err)
 		return nil, errGeneral
 	}
+	return
+}
+
+func (d *DiagnoseService) GetDetail(input ...string) (result interface{}, err error) {
+	var errGeneral = fmt.Errorf("failed to show diagnose")
+	patientId := input[0]
+
+	oID, err := primitive.ObjectIDFromHex(patientId)
+	if err != nil {
+		zap.S().Error(err)
+		return nil, errors.New("failed to parse id")
+	}
+
+	filter := bson.M{
+		"timestamp.deleted_at": nil,
+		"_id":                  oID,
+	}
+
+	res, err := d.PatientRepo.Showpatient(filter, nil, context.TODO())
+	if err != nil {
+		return nil, errGeneral
+	}
+	result = res.LastDiagnose
 	return
 }
