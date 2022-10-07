@@ -10,7 +10,7 @@ type Diagnose struct {
 	PatientID   string      `json:"patient_id" bson:"patient_id,omitempty"`
 	UnitID      string      `json:"unit_id" bson:"unit_id,omitempty"`
 	DistrictID  string      `json:"district_id" bson:"district_id,omitempty"`
-	KondisiGigi [8][8]string `json:"kondisi_gigi" bson:"kondisi_gigi"`
+	KondisiGigi [8][]string `json:"kondisi_gigi" bson:"kondisi_gigi"`
 	KarangGigi  KarangGigi `json:"karang_gigi" bson:"karang_gigi"`
 	Note        string      `json:"note" bson:"note"`
 	Condition   string      `json:"condition" bson:"condition"`
