@@ -232,3 +232,7 @@ func (d *DiagnoseService) GetDetail(input ...string) (result interface{}, err er
 	result = res.LastDiagnose
 	return
 }
+
+func (d *DiagnoseService) GetList(input ...string) (result interface{}, err error) {
+	return d.DiagnoseRepo.GetList(input...)
+}
