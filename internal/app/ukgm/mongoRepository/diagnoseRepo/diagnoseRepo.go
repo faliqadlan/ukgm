@@ -100,7 +100,7 @@ func (d *DiagnoseRepo) GetList(input ...string) (result interface{}, err error) 
 
 	var diagnoseProgessArr []entities.DiagnoseProgress
 
-	for i := 0; i < lastMonthNumber + 1; i++ {
+	for i := 0; i < lastMonthNumber; i++ {
 		diagnoseProgress := entities.DiagnoseProgress{}
 		minMonth := now.AddDate(0, -i, 0)
 		diagnoseProgress.Date = minMonth.Format("2006-01")
