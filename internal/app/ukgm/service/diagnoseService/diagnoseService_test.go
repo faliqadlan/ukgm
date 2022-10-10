@@ -3,6 +3,7 @@ package diagnose_service
 import (
 	"fmt"
 	"net/url"
+	"strconv"
 	"testing"
 	"time"
 	"ukgm/internal/app/config"
@@ -45,12 +46,28 @@ func TestStoreData(t *testing.T) {
 	t.Log(srv)
 
 	t.Run("success store data", func(t *testing.T) {
+
+		var kondisiGigi [8][]string
+
+		for i := 0; i < 4; i++ {
+			for j := 0; j < 8; j++ {
+				kondisiGigi[i] = append(kondisiGigi[i], (strconv.Itoa(i) + "" + strconv.Itoa(j)))
+			}
+		}
+
+		for i := 4; i < 8; i++ {
+			for j := 0; j < 5; j++ {
+				kondisiGigi[i] = append(kondisiGigi[i], (strconv.Itoa(i) + "" + strconv.Itoa(j)))
+			}
+		}
+
 		data := &entities.Diagnose{
-			PatientID:  "63328dfd6f67b4f7e7fe2b82",
-			UnitID:     "632914b5b3927d861c734ac5",
-			DistrictID: "631dd39ef9c8ba488679be28",
-			Note:       time.Now().String(),
-			Condition:  ukgm.KondisiBaik,
+			PatientID:   "63401b8a940418544d99bcb3",
+			UnitID:      "632914b5b3927d861c734ac5",
+			DistrictID:  "631dd39ef9c8ba488679be28",
+			Note:        time.Now().String(),
+			Condition:   ukgm.KondisiBaik,
+			KondisiGigi: kondisiGigi,
 		}
 
 		dataInput := []interface{}{data, true}
