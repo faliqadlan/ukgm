@@ -110,7 +110,7 @@ func (d *DiagnoseRepo) GetList(input ...string) (result interface{}, err error) 
 		switch {
 		case districtId != "":
 			filter = bson.M{
-				"district_id": districtId,
+				"district_id":          districtId,
 				"timestamp.deleted_at": nil,
 				"timestamp.created_at": bson.M{
 					"$gte": primitive.NewDateTimeFromTime(utils.StartOfMonth(minMonth)),
@@ -119,7 +119,7 @@ func (d *DiagnoseRepo) GetList(input ...string) (result interface{}, err error) 
 			}
 		case unitId != "":
 			filter = bson.M{
-				"unit_id": unitId,
+				"unit_id":              unitId,
 				"timestamp.deleted_at": nil,
 				"timestamp.created_at": bson.M{
 					"$gte": primitive.NewDateTimeFromTime(utils.StartOfMonth(minMonth)),
@@ -128,8 +128,8 @@ func (d *DiagnoseRepo) GetList(input ...string) (result interface{}, err error) 
 			}
 		case unitId != "" && districtId != "":
 			filter = bson.M{
-				"district_id": districtId,
-				"unit_id":     unitId,
+				"district_id":          districtId,
+				"unit_id":              unitId,
 				"timestamp.deleted_at": nil,
 				"timestamp.created_at": bson.M{
 					"$gte": primitive.NewDateTimeFromTime(utils.StartOfMonth(minMonth)),
@@ -156,7 +156,10 @@ func (d *DiagnoseRepo) GetList(input ...string) (result interface{}, err error) 
 			if err := cursor.Decode(&diagnose); err != nil {
 				return nil, err
 			}
-			log.Println(diagnose.Timestamp)
+			if diagnose.Condition == ukgm.KondisiBaik {
+				log.Println(diagnose.PatientID, diagnose.ID, diagnose.Timestamp.CreatedAt, diagnose.Timestamp.DeletedAt)
+			}
+
 			switch diagnose.Condition {
 			case ukgm.KondisiBaik:
 				diagnoseProgress.ConditionOverview.Baik += 1
