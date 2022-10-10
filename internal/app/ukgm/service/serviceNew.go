@@ -27,6 +27,7 @@ type ServiceNew struct {
 	PatientSrvFetchIndex FetchIndexSrv
 	DiagnoseSrvStoreData StoreDataSrv
 	DiagnoseSrvGetDetail GetDetailSrv
+	DiagnoseSrvGetList   GetListsrv
 }
 
 func ServiceNewDeclare() (result *ServiceNew, err error) {
@@ -68,6 +69,7 @@ func (s *ServiceNew) Init() {
 	s.PatientSrvFetchIndex = patient_service.New(s.Repo)
 	s.DiagnoseSrvStoreData = diagnose_service.New(s.Repo)
 	s.DiagnoseSrvGetDetail = diagnose_service.New(s.Repo)
+	s.DiagnoseSrvGetList = diagnose_service.New(s.Repo)
 }
 
 func MongoDeclareForTesting() (repo *mongorepository.MongoRepo, err error) {

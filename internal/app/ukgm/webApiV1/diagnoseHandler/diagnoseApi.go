@@ -20,5 +20,6 @@ func NewDiagnoseApi(srv *service.ServiceNew) *DiagnoseApi {
 
 func (d *DiagnoseApi) Init(r chi.Router) {
 	r.Get("/", d.GetDetail)
+	r.Get("/list", d.GetList)
 	r.Post("/", d.StoreData)
 }

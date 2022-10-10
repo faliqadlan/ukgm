@@ -77,3 +77,17 @@ func (d *DiagnoseApi) GetDetail(w http.ResponseWriter, r *http.Request) {
 
 	responses.SendJSON(responses.NewResponse(data), w)
 }
+
+func (d *DiagnoseApi) GetList(w http.ResponseWriter, r *http.Request) {
+	districtId := r.URL.Query().Get("disctrict_id")
+	unitId := r.URL.Query().Get("unit_id")
+	lastMonthsNumber := r.URL.Query().Get("last_months_number")
+
+	res, err := d.srv.DiagnoseSrvGetList.GetList(districtId, unitId, lastMonthsNumber)
+	if err != nil {
+		zap.S().Error(err)
+		responses.SendErrorJSON(responses.PrintErrorMessage(err), w)
+		return
+	}
+	responses.SendJSON(responses.NewResponse(res), w)
+}
