@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"strconv"
 	"time"
 	"ukgm/internal/app/ukgm"
@@ -110,6 +111,7 @@ func (d *DiagnoseRepo) GetList(input ...string) (result interface{}, err error) 
 		case districtId != "":
 			filter = bson.M{
 				"district_id": districtId,
+				"timestamp.deleted_at": nil,
 				"timestamp.created_at": bson.M{
 					"$gte": primitive.NewDateTimeFromTime(utils.StartOfMonth(minMonth)),
 					"$lte": primitive.NewDateTimeFromTime(utils.EndOfMonth(minMonth)),
@@ -118,6 +120,7 @@ func (d *DiagnoseRepo) GetList(input ...string) (result interface{}, err error) 
 		case unitId != "":
 			filter = bson.M{
 				"unit_id": unitId,
+				"timestamp.deleted_at": nil,
 				"timestamp.created_at": bson.M{
 					"$gte": primitive.NewDateTimeFromTime(utils.StartOfMonth(minMonth)),
 					"$lte": primitive.NewDateTimeFromTime(utils.EndOfMonth(minMonth)),
@@ -127,6 +130,7 @@ func (d *DiagnoseRepo) GetList(input ...string) (result interface{}, err error) 
 			filter = bson.M{
 				"district_id": districtId,
 				"unit_id":     unitId,
+				"timestamp.deleted_at": nil,
 				"timestamp.created_at": bson.M{
 					"$gte": primitive.NewDateTimeFromTime(utils.StartOfMonth(minMonth)),
 					"$lte": primitive.NewDateTimeFromTime(utils.EndOfMonth(minMonth)),
@@ -134,6 +138,7 @@ func (d *DiagnoseRepo) GetList(input ...string) (result interface{}, err error) 
 			}
 		default:
 			filter = bson.M{
+				"timestamp.deleted_at": nil,
 				"timestamp.created_at": bson.M{
 					"$gte": primitive.NewDateTimeFromTime(utils.StartOfMonth(minMonth)),
 					"$lte": primitive.NewDateTimeFromTime(utils.EndOfMonth(minMonth)),
@@ -151,6 +156,7 @@ func (d *DiagnoseRepo) GetList(input ...string) (result interface{}, err error) 
 			if err := cursor.Decode(&diagnose); err != nil {
 				return nil, err
 			}
+			log.Println(diagnose.Timestamp)
 			switch diagnose.Condition {
 			case ukgm.KondisiBaik:
 				diagnoseProgress.ConditionOverview.Baik += 1
