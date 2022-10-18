@@ -94,10 +94,16 @@ func (d *DiagnoseRepo) GetList(input ...string) (result interface{}, err error) 
 	location, _ := time.LoadLocation("Asia/Jakarta")
 	now := time.Now().In(location).Local()
 
+	if lastMonthNumberS == "" {
+		lastMonthNumberS = "1"
+	}
+
 	lastMonthNumber, err := strconv.Atoi(lastMonthNumberS)
 	if err != nil {
 		return nil, err
 	}
+
+	log.Println(districtId, unitId)
 
 	var diagnoseProgessArr []entities.DiagnoseProgress
 
@@ -155,9 +161,6 @@ func (d *DiagnoseRepo) GetList(input ...string) (result interface{}, err error) 
 			diagnose := entities.Diagnose{}
 			if err := cursor.Decode(&diagnose); err != nil {
 				return nil, err
-			}
-			if diagnose.Condition == ukgm.KondisiBaik {
-				log.Println(diagnose.PatientID, diagnose.ID, diagnose.Timestamp.CreatedAt, diagnose.Timestamp.DeletedAt)
 			}
 
 			switch diagnose.Condition {
