@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"strconv"
 	"time"
 	"ukgm/internal/app/ukgm"
@@ -102,9 +101,6 @@ func (d *DiagnoseRepo) GetList(input ...string) (result interface{}, err error) 
 	if err != nil {
 		return nil, err
 	}
-
-	log.Println(districtId, unitId)
-
 	var diagnoseProgessArr []entities.DiagnoseProgress
 
 	for i := 0; i < lastMonthNumber; i++ {
