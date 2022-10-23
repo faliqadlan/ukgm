@@ -79,7 +79,7 @@ func (d *DiagnoseApi) GetDetail(w http.ResponseWriter, r *http.Request) {
 }
 
 func (d *DiagnoseApi) GetList(w http.ResponseWriter, r *http.Request) {
-	districtId := r.URL.Query().Get("disctrict_id")
+	districtId := r.URL.Query().Get("district_id")
 	unitId := r.URL.Query().Get("unit_id")
 	lastMonthsNumber := r.URL.Query().Get("last_months_number")
 
