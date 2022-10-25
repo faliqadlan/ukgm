@@ -116,7 +116,7 @@ func (p *PatientRepo) UpdatePatient(data *entities.Patient, ctx context.Context)
 	oId, err := primitive.ObjectIDFromHex(utils.ObjectIDHex(data.ID))
 	if err != nil {
 		zap.S().Error(err)
-		return errors.New("error in update district")
+		return errors.New("error in update patient")
 	}
 
 	filter := bson.M{
