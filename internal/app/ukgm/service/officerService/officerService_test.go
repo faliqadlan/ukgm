@@ -40,9 +40,9 @@ func MongoDeclareForTesting() (repo *mongorepository.MongoRepo, err error) {
 	Pondok Labu
 	test kelurahan
 */
-var districtIdList = []string{"6319e9dbb0aa169ea947cf63", "6319e9dbb0aa169ea947cf64", "6319e9dbb0aa169ea947cf65",
-	"6319e9dbb0aa169ea947cf66",
-	"6319e9dcb0aa169ea947cf67", "6319e9dcb0aa169ea947cf68"}
+var districtIdList = []string{"631dd39ef9c8ba488679be23", "631dd39ef9c8ba488679be24", "631dd39ef9c8ba488679be25",
+	"631dd39ef9c8ba488679be26",
+	"631dd39ef9c8ba488679be27", "631dd39ef9c8ba488679be28"}
 
 var doctoNameDistrictList = []string{"drg. Ira Mustika", "drg. Lilie Prima Likuningsih", "drg. Hany Faridah", "drg. Eva Susiyanti", "drg.Dian Kemala Sari", "dokter test kelurahan"}
 

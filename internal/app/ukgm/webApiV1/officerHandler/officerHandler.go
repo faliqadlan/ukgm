@@ -3,6 +3,7 @@ package officer_handler
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"ukgm/internal/app/ukgm/model/entities"
 	"ukgm/internal/app/ukgm/model/request"
@@ -31,6 +32,7 @@ func (o *OfficerApi) StoreData(w http.ResponseWriter, r *http.Request) {
 		response.SendErrorJSON(response.PrintErrorMessage(err), w)
 		return
 	}
+	log.Println(res)
 	response.SendJSON(response.NewResponse(res), w)
 }
 

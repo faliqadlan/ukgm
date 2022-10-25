@@ -21,8 +21,8 @@ func NewOfficerApi(srv *service.ServiceNew) *OfficerApi {
 func (o *OfficerApi) Init(r chi.Router) {
 
 	r.Post("/", o.StoreData)
-	r.Post("/", o.GetList)
-	r.Route("/{officer_id", func(r chi.Router) {
-		r.Put("/", o.SoftDelete)
+	r.Get("/", o.GetList)
+	r.Route("/{officer_id}", func(r chi.Router) {
+		r.Delete("/", o.SoftDelete)
 	})
 }
