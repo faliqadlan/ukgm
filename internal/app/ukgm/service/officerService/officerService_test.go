@@ -9,9 +9,11 @@ import (
 	"ukgm/internal/app/config/env"
 	"ukgm/internal/app/ukgm/model/entities"
 	mongorepository "ukgm/internal/app/ukgm/mongoRepository"
+	"ukgm/internal/app/utils"
 
 	"firebase.google.com/go/auth"
 	"github.com/go-playground/assert"
+	"github.com/google/uuid"
 	"go.uber.org/zap"
 )
 
@@ -76,13 +78,179 @@ func TestInputOfficer(t *testing.T) {
 			Profesion:  "doctor",
 		}
 
-		log.Println(officerData)
-		log.Println(srv)
 		res, err := srv.StoreData(officerData, &auth.Token{})
-		log.Println(err)
-		log.Println(res)
 		assert.Equal(t, err, nil)
-		log.Println(err)
 		log.Println(res)
 	}
+
+	// input nurse kelurahan
+	for i := 0; i < len(districtIdList); i++ {
+		officerData := &entities.Officer{
+			DistrictID: districtIdList[i],
+			Name:       nurseNameDistrictList[i],
+			Level:      "kelurahan",
+			Profesion:  "nurse",
+		}
+
+		res, err := srv.StoreData(officerData, &auth.Token{})
+		assert.Equal(t, err, nil)
+		log.Println(res)
+	}
+
+	// input doctor kecamatan
+	for i := 0; i < len(doctorNameKecamatanList); i++ {
+		officerData := &entities.Officer{
+			Name:      doctorNameKecamatanList[i],
+			Profesion: "doctor",
+		}
+
+		res, err := srv.StoreData(officerData, &auth.Token{})
+		assert.Equal(t, err, nil)
+		log.Println(res)
+	}
+
+	// input nurse kecamatan
+	for i := 0; i < len(nurseNameKecamatanList); i++ {
+		officerData := &entities.Officer{
+			Name:      nurseNameKecamatanList[i],
+			Profesion: "nurse",
+		}
+
+		res, err := srv.StoreData(officerData, &auth.Token{})
+		assert.Equal(t, err, nil)
+		log.Println(res)
+	}
+}
+
+func TestNurse(t *testing.T) {
+	// 6357f6aa495cc77b8bd6e50c
+
+	repo, err := MongoDeclareForTesting()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	srv := New(repo)
+
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+
+	t.Run("store nurse and delete", func(t *testing.T) {
+		data := &entities.Officer{
+			DistrictID: "6319e9dcb0aa169ea947cf68",
+			Name:       "perawat test kelurahan " + uuid.NewString(),
+			Profesion:  "nurse",
+		}
+
+		res, err := srv.StoreData(data, &auth.Token{})
+		assert.Equal(t, err, nil)
+		log.Println(res)
+
+		delData := res.(*entities.Officer)
+
+		err = srv.SoftDelete(&auth.Token{}, utils.ObjectIDHex(delData.ID))
+		assert.Equal(t, err, nil)
+	})
+
+	t.Run("fail soft test delete", func(t *testing.T) {
+		err := srv.SoftDelete(&auth.Token{}, "6357f6aa495cc77b8bd6e50c")
+		assert.NotEqual(t, err, nil)
+	})
+
+	t.Run("show list", func(t *testing.T) {
+		res, err := srv.GetList("6319e9dcb0aa169ea947cf68", "nurse", "true")
+		assert.Equal(t, err, nil)
+		log.Println(res)
+	})
+
+	t.Run("store nurse", func(t *testing.T) {
+		data := &entities.Officer{
+			DistrictID: "6319e9dcb0aa169ea947cf68",
+			Name:       "perawat test kelurahan " + uuid.NewString(),
+			Profesion:  "nurse",
+		}
+
+		res, err := srv.StoreData(data, &auth.Token{})
+		assert.Equal(t, err, nil)
+		log.Println(res)
+	})
+
+	t.Run("show list", func(t *testing.T) {
+		res, err := srv.GetList("6319e9dcb0aa169ea947cf68", "nurse", "true")
+		assert.Equal(t, err, nil)
+		log.Println(res)
+	})
+}
+
+func TestShowList(t *testing.T) {
+	repo, err := MongoDeclareForTesting()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	srv := New(repo)
+
+	t.Run("show list false", func(t *testing.T) {
+		res, err := srv.GetList("6319e9dcb0aa169ea947cf68", "nurse", "false")
+		assert.Equal(t, err, nil)
+		log.Println(res)
+	})
+
+	t.Run("show list true", func(t *testing.T) {
+		res, err := srv.GetList("6319e9dcb0aa169ea947cf68", "nurse", "true")
+		assert.Equal(t, err, nil)
+		log.Println(res)
+	})
+
+	t.Run("show list false", func(t *testing.T) {
+		res, err := srv.GetList("6319e9dcb0aa169ea947cf68", "doctor", "false")
+		assert.Equal(t, err, nil)
+		log.Println(res)
+	})
+
+	t.Run("show list true", func(t *testing.T) {
+		res, err := srv.GetList("6319e9dcb0aa169ea947cf68", "doctor", "true")
+		assert.Equal(t, err, nil)
+		log.Println(res)
+	})
+}
+
+func TestDoctor(t *testing.T) {
+	// 6357f6aa495cc77b8bd6e50c
+
+	repo, err := MongoDeclareForTesting()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	srv := New(repo)
+
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+
+	t.Run("store doctor and delete", func(t *testing.T) {
+		data := &entities.Officer{
+			DistrictID: "6319e9dcb0aa169ea947cf68",
+			Name:       "dokter test kelurahan " + uuid.NewString(),
+			Profesion:  "doctor",
+		}
+
+		res, err := srv.StoreData(data, &auth.Token{})
+		assert.Equal(t, err, nil)
+		log.Println(res)
+
+		delData := res.(*entities.Officer)
+
+		err = srv.SoftDelete(&auth.Token{}, utils.ObjectIDHex(delData.ID))
+		assert.Equal(t, err, nil)
+	})
+
+	t.Run("fail soft test delete", func(t *testing.T) {
+		err := srv.SoftDelete(&auth.Token{}, "6357f6aa495cc77b8bd6e50c")
+		assert.NotEqual(t, err, nil)
+	})
+
+	t.Run("show list", func(t *testing.T) {
+		res, err := srv.GetList("6319e9dcb0aa169ea947cf68", "doctor", "true")
+		assert.Equal(t, err, nil)
+		log.Println(res)
+	})
 }

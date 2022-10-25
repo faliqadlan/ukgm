@@ -95,7 +95,7 @@ func (o *OfficerService) GetList(input ...string) (result interface{}, err error
 	filter := bson.M{
 		"timestamp.deleted_at": nil,
 		"district_id":          input[0],
-		"level":                input[1],
+		"profesion":                input[1],
 	}
 
 	res, err := o.OfficerRepo.FetchList(filter, options.Find().SetSort(bson.D{{Key: "name", Value: 1}}), context.TODO())
@@ -108,7 +108,7 @@ func (o *OfficerService) GetList(input ...string) (result interface{}, err error
 		filter = bson.M{
 			"timestamp.deleted_at": nil,
 			"district_id":          "kecamatan",
-			"level":                input[1],
+			"profesion":                input[1],
 		}
 
 		res1, err := o.OfficerRepo.FetchList(filter, options.Find().SetSort(bson.D{{Key: "name", Value: 1}}), context.TODO())
