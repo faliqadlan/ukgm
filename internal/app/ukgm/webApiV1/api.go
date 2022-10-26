@@ -6,6 +6,7 @@ import (
 	district_handler "ukgm/internal/app/ukgm/webApiV1/districtHandler"
 	doctor_handler "ukgm/internal/app/ukgm/webApiV1/doctorHandler"
 	login "ukgm/internal/app/ukgm/webApiV1/loginHandler"
+	officer_handler "ukgm/internal/app/ukgm/webApiV1/officerHandler"
 	patient_handler "ukgm/internal/app/ukgm/webApiV1/patientHandler"
 	simple "ukgm/internal/app/ukgm/webApiV1/simpleHandler"
 	unit_handler "ukgm/internal/app/ukgm/webApiV1/unitHandler"
@@ -24,6 +25,7 @@ type Api struct {
 	unitApi     *unit_handler.UnitApi
 	patientApi  *patient_handler.PatientApi
 	diagnoseApi *diagnose_handler.DiagnoseApi
+	officerApi  *officer_handler.OfficerApi
 }
 
 func NewApi(service *service.ServiceNew, loginApi *login.LoginApi) (result *Api) {
@@ -37,6 +39,7 @@ func NewApi(service *service.ServiceNew, loginApi *login.LoginApi) (result *Api)
 		unitApi:     unit_handler.NewUnitApi(service),
 		patientApi:  patient_handler.NewPatientApi(service),
 		diagnoseApi: diagnose_handler.NewDiagnoseApi(service),
+		officerApi:  officer_handler.NewOfficerApi(service),
 	}
 	return
 }
@@ -70,5 +73,8 @@ func (api *Api) Init(r chi.Router) {
 
 	r.Route("/diagnose", func(r chi.Router) {
 		r.Route("/", api.diagnoseApi.Init)
+	})
+	r.Route("/officer", func(r chi.Router) {
+		r.Route("/", api.officerApi.Init)
 	})
 }

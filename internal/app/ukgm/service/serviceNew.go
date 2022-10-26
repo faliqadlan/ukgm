@@ -9,6 +9,7 @@ import (
 	diagnose_service "ukgm/internal/app/ukgm/service/diagnoseService"
 	district_service "ukgm/internal/app/ukgm/service/district_service"
 	doctor_service "ukgm/internal/app/ukgm/service/doctorService"
+	officer_service "ukgm/internal/app/ukgm/service/officerService"
 	patient_service "ukgm/internal/app/ukgm/service/patientService"
 	unit_service "ukgm/internal/app/ukgm/service/unitService"
 	user_service "ukgm/internal/app/ukgm/service/userService"
@@ -28,6 +29,9 @@ type ServiceNew struct {
 	DiagnoseSrvStoreData StoreDataSrv
 	DiagnoseSrvGetDetail GetDetailSrv
 	DiagnoseSrvGetList   GetListsrv
+	OfficerSrvStoreData  StoreDataSrv
+	OfficerSrvSoftDelete DeleteDataSrv
+	OfficerSrvGetList    GetListsrv
 }
 
 func ServiceNewDeclare() (result *ServiceNew, err error) {
@@ -70,6 +74,9 @@ func (s *ServiceNew) Init() {
 	s.DiagnoseSrvStoreData = diagnose_service.New(s.Repo)
 	s.DiagnoseSrvGetDetail = diagnose_service.New(s.Repo)
 	s.DiagnoseSrvGetList = diagnose_service.New(s.Repo)
+	s.OfficerSrvStoreData = officer_service.New(s.Repo)
+	s.OfficerSrvSoftDelete = officer_service.New(s.Repo)
+	s.OfficerSrvGetList = officer_service.New(s.Repo)
 }
 
 func MongoDeclareForTesting() (repo *mongorepository.MongoRepo, err error) {
