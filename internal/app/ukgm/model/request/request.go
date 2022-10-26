@@ -15,6 +15,7 @@ type Patient struct {
 	Name       string `json:"name" bson:"name" part:"main" properties:"searchable"`
 	Dob        string `json:"dob" bson:"dob"`
 	Gender     string `json:"gender" bson:"gender"`
+	NoHp       string `json:"no_hp" bson:"no_hp"`
 }
 
 func (p *Patient) ToEntity() (*entities.Patient, error) {
@@ -42,6 +43,7 @@ func (p *Patient) ToEntity() (*entities.Patient, error) {
 		Name:       p.Name,
 		Dob:        &dob,
 		Gender:     p.Gender,
+		NoHp: p.NoHp,
 	}, nil
 
 }

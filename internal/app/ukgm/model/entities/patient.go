@@ -15,6 +15,7 @@ type Patient struct {
 	MrNumber     string      `json:"mr_number" bson:"mr_number"`
 	Dob          *time.Time  `json:"dob" bson:"dob"`
 	Gender       string      `json:"gender" bson:"gender"`
+	NoHp         string      `json:"no_hp" bson:"no_hp"`
 	LastDiagnose *Diagnose   `json:"last_diagnose" bson:"last_diagnose"`
 
 	// include
@@ -27,6 +28,7 @@ type PatientList struct {
 	NamePatient  string `json:"name_patient"`
 	NameUnit     string `json:"name_unit"`
 	Dob          string `json:"dob"`
+	NoHp         string `json:"no_hp"`
 	LastDiagnose string `json:"last_diagnose"`
 	Condition    string `json:"condition"`
 }
@@ -55,6 +57,7 @@ func (p *Patient) ToPatientList() *PatientList {
 		Dob:          dobS,
 		LastDiagnose: ldS,
 		Condition:    cond,
+		NoHp:         p.NoHp,
 	}
 }
 
