@@ -26,8 +26,6 @@ type (
 		ID                interface{}     `json:"_id"`
 		Name              string          `json:"name"`
 		Units             []*UnitDistrict `json:"units"`
-		Doctor            []*Doctor       `json:"Doctor"`
-		Nurse             []*Nurse        `json:"Nurse"`
 		ConditionOverview `json:"condition_overview"`
 
 		// include
@@ -96,20 +94,6 @@ func (d *District) ToDistrictResponse() *DistrictResponse {
 				res.Units = append(res.Units, unitDistrict)
 			}
 
-		}
-	}
-
-	if d.Doctor != nil {
-		for _, v := range d.Doctor {
-			if v != nil {
-				res.Doctor = append(res.Doctor, v)
-			}
-		}
-	}
-
-	if d.Nurse != nil {
-		for _, v := range d.Nurse {
-			res.Nurse = append(res.Nurse, v)
 		}
 	}
 
