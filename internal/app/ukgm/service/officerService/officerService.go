@@ -94,8 +94,18 @@ func (o *OfficerService) GetList(input ...string) (result interface{}, err error
 	var errGeneral = fmt.Errorf("failed to show officer list")
 	filter := bson.M{
 		"timestamp.deleted_at": nil,
-		"district_id":          input[0],
-		"profesion":                input[1],
+		"level":                "kelurahan",
+	}
+
+	if input[0] != "" {
+		filter["district_id"] = input[0]
+	}
+
+	switch {
+	case input[0] != "":
+		filter["district_id"] = input[0]
+	case input[1] != "":
+		filter["profesion"] = input[1]
 	}
 
 	res, err := o.OfficerRepo.FetchList(filter, options.Find().SetSort(bson.D{{Key: "name", Value: 1}}), context.TODO())
@@ -108,7 +118,11 @@ func (o *OfficerService) GetList(input ...string) (result interface{}, err error
 		filter = bson.M{
 			"timestamp.deleted_at": nil,
 			"district_id":          "kecamatan",
-			"profesion":                input[1],
+			"level":                "kecamatan",
+		}
+
+		if input[1] != "" {
+			filter["profesion"] = input[1]
 		}
 
 		res1, err := o.OfficerRepo.FetchList(filter, options.Find().SetSort(bson.D{{Key: "name", Value: 1}}), context.TODO())

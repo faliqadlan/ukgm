@@ -41,6 +41,8 @@ func MongoDeclareForTesting() (repo *mongorepository.MongoRepo, err error) {
 	test kelurahan
 */
 
+var districtNameList = []string{"Cipete Selatan", "Gandaria Selatan", "Cilandak Barat", "Lebak Bulus", "Pondok Labu", "Test kelurahan"}
+
 // dev
 // var districtIdList = []string{"631dd39ef9c8ba488679be23", "631dd39ef9c8ba488679be24", "631dd39ef9c8ba488679be25", "631dd39ef9c8ba488679be26", "631dd39ef9c8ba488679be27", "631dd39ef9c8ba488679be28"}
 
@@ -74,11 +76,13 @@ func TestInputOfficer(t *testing.T) {
 
 	// input dokter kelurahan
 	for i := 0; i < len(districtIdList); i++ {
+
 		officerData := &entities.Officer{
-			DistrictID: districtIdList[i],
-			Name:       doctoNameDistrictList[i],
-			Level:      "kelurahan",
-			Profesion:  "doctor",
+			DistrictID:   districtIdList[i],
+			Name:         doctoNameDistrictList[i],
+			Level:        "kelurahan",
+			Profesion:    "doctor",
+			DistrictName: districtNameList[i],
 		}
 
 		res, err := srv.StoreData(officerData, &auth.Token{})
@@ -89,10 +93,11 @@ func TestInputOfficer(t *testing.T) {
 	// input nurse kelurahan
 	for i := 0; i < len(districtIdList); i++ {
 		officerData := &entities.Officer{
-			DistrictID: districtIdList[i],
-			Name:       nurseNameDistrictList[i],
-			Level:      "kelurahan",
-			Profesion:  "nurse",
+			DistrictID:   districtIdList[i],
+			Name:         nurseNameDistrictList[i],
+			Level:        "kelurahan",
+			Profesion:    "nurse",
+			DistrictName: districtNameList[i],
 		}
 
 		res, err := srv.StoreData(officerData, &auth.Token{})
