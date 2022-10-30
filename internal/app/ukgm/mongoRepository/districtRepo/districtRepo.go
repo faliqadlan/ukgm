@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"ukgm/internal/app/ukgm/model/entities"
 	mongorepository "ukgm/internal/app/ukgm/mongoRepository"
 	"ukgm/internal/app/utils"
@@ -51,14 +50,11 @@ func (d *DistrictRepo) ShowDistrict(filter bson.M, options *options.FindOneOptio
 		zap.S().Error(err)
 		return nil, err
 	}
-	data, err := json.Marshal(result)
+	_, err = json.Marshal(result)
 	if err != nil {
 		zap.S().Error(err)
 		return nil, err
 	}
-	s := string(data)
-	message := fmt.Sprintf("Found a single document : " + s + "\n")
-	d.MongoRepo.BasicMongo.LogPrint(message)
 
 	return result, nil
 }

@@ -3,7 +3,6 @@ package user_repo
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"ukgm/internal/app/ukgm/model/entities"
 	mongorepository "ukgm/internal/app/ukgm/mongoRepository"
 
@@ -25,14 +24,11 @@ func (u *UserRepo) ShowUser(filter bson.M, options *options.FindOneOptions) (res
 		zap.S().Error(err)
 		return nil, err
 	}
-	data, err := json.Marshal(result)
+	_, err = json.Marshal(result)
 	if err != nil {
 		zap.S().Error(err)
 		return nil, err
 	}
-	s := string(data)
-	message := fmt.Sprintf("Found a single document : " + s + "\n")
-	u.MongoRepo.BasicMongo.LogPrint(message)
 
 	return result, nil
 }
