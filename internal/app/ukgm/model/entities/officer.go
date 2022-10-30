@@ -8,7 +8,7 @@ type Officer struct {
 	Name         string      `json:"name" bson:"name" part:"main" properties:"searchable"`
 	Level        string      `json:"level" bson:"level"`
 	Profesion    string      `json:"profesion" bson:"profesion"`
-	DistrictName string      `json:"district_name" bson:"district_name"`
+	DistrictName string      `json:"district_name" bson:"districtname"`
 
 	// include
 	Timestamp
