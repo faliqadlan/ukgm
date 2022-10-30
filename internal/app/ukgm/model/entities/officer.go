@@ -8,7 +8,7 @@ type Officer struct {
 	Name         string      `json:"name" bson:"name" part:"main" properties:"searchable"`
 	Level        string      `json:"level" bson:"level"`
 	Profesion    string      `json:"profesion" bson:"profesion"`
-	DistrictName string      `json:"district_name"`
+	DistrictName string      `json:"district_name" bson:"district_name"`
 
 	// include
 	Timestamp
@@ -23,9 +23,9 @@ type OfficerList struct {
 
 func (o *Officer) ToOfficerList() OfficerList {
 	return OfficerList{
-		Name: o.Name, 
-		ID: utils.ObjectIDHex(o.ID),
-		Profesion: o.Profesion,
+		Name:         o.Name,
+		ID:           utils.ObjectIDHex(o.ID),
+		Profesion:    o.Profesion,
 		DistrictName: o.DistrictName,
 	}
 }
