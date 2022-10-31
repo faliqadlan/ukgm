@@ -28,7 +28,7 @@ func New(repo *mongorepository.MongoRepo) *OfficerService {
 
 func (o *OfficerService) StoreData(data interface{}, auth *auth.Token) (result interface{}, err error) {
 	errGeneral := fmt.Errorf("failed to store new office")
-	var ctx = context.Background()
+	var ctx = context.TODO()
 
 	var dataOfficer = &entities.Officer{}
 

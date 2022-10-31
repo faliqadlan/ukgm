@@ -26,7 +26,7 @@ func New(s *http.Server) *Server {
 // Start server
 func (s *Server) Start() {
 	// Setup Context
-	_, cancel := context.WithCancel(context.Background())
+	_, cancel := context.WithCancel(context.TODO())
 	defer cancel()
 	// Add to the WaitGroup for the listener goroutine
 	s.wg.Add(1)
@@ -42,7 +42,7 @@ func (s *Server) Start() {
 // Stop server
 func (s *Server) Stop() {
 	timeout := 10 * time.Second
-	ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	ctx, cancel := context.WithTimeout(context.TODO(), timeout)
 	defer cancel()
 	if err := s.srv.Shutdown(ctx); err != nil {
 		if err = s.srv.Close(); err != nil {

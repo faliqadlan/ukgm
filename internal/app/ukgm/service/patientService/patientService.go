@@ -34,7 +34,7 @@ func New(repo *mongorepository.MongoRepo) *PatientService {
 
 func (p *PatientService) StoreData(data interface{}, auth *auth.Token) (result interface{}, err error) {
 	errGeneral := fmt.Errorf("failed to store new patient")
-	var ctx = context.Background()
+	var ctx = context.TODO()
 	var session mongo.Session
 	var dataPat = &entities.Patient{}
 
