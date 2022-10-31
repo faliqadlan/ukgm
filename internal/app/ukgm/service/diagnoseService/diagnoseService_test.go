@@ -140,30 +140,30 @@ func TestGetList(t *testing.T) {
 	t.Log(srv)
 
 	t.Run("success get list with district", func(t *testing.T) {
-		res, err := srv.GetList("631dd39ef9c8ba488679be28", "", "6")
-		t.Log(err)
-		assert.Equal(t, err, nil)
-		t.Log(res)
-	})
-
-	t.Run("success get list with unit", func(t *testing.T) {
-		res, err := srv.GetList("", "632914b5b3927d861c734ac5", "12")
-		t.Log(err)
-		assert.Equal(t, err, nil)
-		t.Log(res)
-	})
-
-	t.Run("success get list with district and unit", func(t *testing.T) {
-		res, err := srv.GetList("631dd39ef9c8ba488679be28", "632914b5b3927d861c734ac5", "12")
-		t.Log(err)
-		assert.Equal(t, err, nil)
-		t.Log(res)
-	})
-
-	t.Run("success get list all", func(t *testing.T) {
 		res, err := srv.GetList("", "", "12")
 		t.Log(err)
 		assert.Equal(t, err, nil)
 		t.Log(res)
 	})
+
+	// t.Run("success get list with unit", func(t *testing.T) {
+	// 	res, err := srv.GetList("", "632914b5b3927d861c734ac5", "12")
+	// 	t.Log(err)
+	// 	assert.Equal(t, err, nil)
+	// 	t.Log(res)
+	// })
+
+	// t.Run("success get list with district and unit", func(t *testing.T) {
+	// 	res, err := srv.GetList("631dd39ef9c8ba488679be28", "632914b5b3927d861c734ac5", "12")
+	// 	t.Log(err)
+	// 	assert.Equal(t, err, nil)
+	// 	t.Log(res)
+	// })
+
+	// t.Run("success get list all", func(t *testing.T) {
+	// 	res, err := srv.GetList("", "", "12")
+	// 	t.Log(err)
+	// 	assert.Equal(t, err, nil)
+	// 	t.Log(res)
+	// })
 }

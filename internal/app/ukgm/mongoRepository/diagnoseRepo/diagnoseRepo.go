@@ -92,6 +92,7 @@ func (d *DiagnoseRepo) GetList(input ...string) (result interface{}, err error) 
 
 	location, _ := time.LoadLocation("Asia/Jakarta")
 	now := time.Now().In(location).Local()
+	monthNow := int(now.Month())
 
 	if lastMonthNumberS == "" {
 		lastMonthNumberS = "1"
@@ -105,7 +106,7 @@ func (d *DiagnoseRepo) GetList(input ...string) (result interface{}, err error) 
 
 	for i := 0; i < lastMonthNumber; i++ {
 		diagnoseProgress := entities.DiagnoseProgress{}
-		minMonth := now.AddDate(0, -i, 0)
+		minMonth := time.Date(now.Year(), time.Month(monthNow-i), 1, 0, 0, 0, 0, location)
 		diagnoseProgress.Date = minMonth.Format("2006-01")
 		var filter bson.M
 
