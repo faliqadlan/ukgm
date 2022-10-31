@@ -140,7 +140,7 @@ func TestGetList(t *testing.T) {
 	t.Log(srv)
 
 	t.Run("success get list with district", func(t *testing.T) {
-		res, err := srv.GetList("", "", "12")
+		res, err := srv.GetList("631dd39ef9c8ba488679be28", "", "12")
 		t.Log(err)
 		assert.Equal(t, err, nil)
 		t.Log(res)
