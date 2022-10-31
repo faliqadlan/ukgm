@@ -73,7 +73,7 @@ func (o *OfficerService) SoftDelete(auth *auth.Token, input ...string) (err erro
 		"_id":                  oID,
 	}
 
-	show, err := o.OfficerRepo.ShowData(filter, nil, context.Background())
+	show, err := o.OfficerRepo.ShowData(filter, nil, context.TODO())
 	if err != nil {
 		zap.S().Error(err)
 		return errGeneral
@@ -81,7 +81,7 @@ func (o *OfficerService) SoftDelete(auth *auth.Token, input ...string) (err erro
 
 	show.Timestamp.Delete(auth)
 
-	err = o.OfficerRepo.UpdateData(show, context.Background())
+	err = o.OfficerRepo.UpdateData(show, context.TODO())
 	if err != nil {
 		zap.S().Error(err)
 		return errGeneral

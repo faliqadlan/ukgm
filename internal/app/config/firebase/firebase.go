@@ -45,7 +45,7 @@ func SetupFirebase() *firebase.App {
 	opt := option.WithCredentialsFile(serviceAccountKeyFilePath)
 
 	//Firebase admin SDK initialization
-	app, err := firebase.NewApp(context.Background(), nil, opt)
+	app, err := firebase.NewApp(context.TODO(), nil, opt)
 	if err != nil {
 		panic("Firebase load error")
 	}
@@ -55,12 +55,12 @@ func SetupFirebase() *firebase.App {
 
 func (f *FirebaseApi) AuthenticationByID(uid string) *auth.UserRecord {
 	// Get an auth client from the firebase.App
-	client, err := f.FirebaseApp.Auth(context.Background())
+	client, err := f.FirebaseApp.Auth(context.TODO())
 	if err != nil {
 		log.Fatalf("error getting Auth client: %v\n", err)
 	}
 
-	u, err := client.GetUser(context.Background(), uid)
+	u, err := client.GetUser(context.TODO(), uid)
 	if err != nil {
 		log.Fatalf("error getting user %s: %v\n", uid, err)
 	}
@@ -70,12 +70,12 @@ func (f *FirebaseApi) AuthenticationByID(uid string) *auth.UserRecord {
 }
 
 func (f *FirebaseApi) GenerateToken(uid string) string {
-	client, err := f.FirebaseApp.Auth(context.Background())
+	client, err := f.FirebaseApp.Auth(context.TODO())
 	if err != nil {
 		log.Fatalf("error getting Auth client: %v\n", err)
 	}
 
-	token, err := client.CustomTokenWithClaims(context.Background(), uid, nil)
+	token, err := client.CustomTokenWithClaims(context.TODO(), uid, nil)
 	if err != nil {
 		log.Fatalf("error minting custom token: %v\n", err)
 	}
@@ -86,13 +86,13 @@ func (f *FirebaseApi) GenerateToken(uid string) string {
 }
 
 func (f *FirebaseApi) EncodeToken( token string) (auth *auth.Token, err error) {
-	client, err := f.FirebaseApp.Auth(context.Background())
+	client, err := f.FirebaseApp.Auth(context.TODO())
 	if err != nil {
 		zap.S().Error(err)
 		return nil, fmt.Errorf("error getting auth client: %v", err)
 	}
 
-	authTok, err := client.VerifyIDToken(context.Background(), token)
+	authTok, err := client.VerifyIDToken(context.TODO(), token)
 	if err != nil {
 		zap.S().Error(err)
 		return nil, fmt.Errorf("error verifying ID token: %v", err)

@@ -186,11 +186,11 @@ func (d *DiagnoseService) StoreData(data interface{}, auth *auth.Token) (result 
 		}
 
 		// for test session error
-		// err = fmt.Errorf("unable to update district: %v", err)
-		// if err != nil {
-		// 	zap.S().Error(err)
-		// 	return errGeneral
-		// }
+		err = fmt.Errorf("unable to update district: %v", err)
+		if err != nil {
+			zap.S().Error(err)
+			return errGeneral
+		}
 
 		if err = session.CommitTransaction(sc); err != nil {
 			zap.S().Error(err)
@@ -200,7 +200,7 @@ func (d *DiagnoseService) StoreData(data interface{}, auth *auth.Token) (result 
 		result = resultStore
 		return nil
 	}); err != nil {
-		if abortErr := session.AbortTransaction(context.Background()); abortErr != nil {
+		if abortErr := session.AbortTransaction(context.TODO()); abortErr != nil {
 			zap.S().Error(err)
 			return nil, errGeneral
 		}

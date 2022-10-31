@@ -50,7 +50,7 @@ func main() {
 	if err != nil {
 		log.Panic(err)
 	}
-	defer newService.Repo.Client.Disconnect(context.Background())
+	defer newService.Repo.Client.Disconnect(context.TODO())
 
 	loginApi := login_handler.NewLoginApi(firebaseApi)
 

@@ -158,7 +158,7 @@ func TestTransactionCommit(t *testing.T) {
 	})
 
 	if err != nil {
-		if abortErr := session.AbortTransaction(context.Background()); abortErr != nil {
+		if abortErr := session.AbortTransaction(context.TODO()); abortErr != nil {
 			panic(abortErr)
 		}
 		panic(err)
