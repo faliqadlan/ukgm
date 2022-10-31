@@ -21,13 +21,13 @@ type MongoRepo struct {
 
 // NewMongoRepo instantiates a new MongoRepo instance
 func NewMongoRepo(url, dbName string) (*MongoRepo, error) {
-	client, err := mongo.Connect(context.Background(), options.Client().ApplyURI(url))
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(url))
 	if err != nil {
 		zap.S().Error()
 		return nil, err
 	}
 
-	err = client.Ping(context.Background(), readpref.Primary())
+	err = client.Ping(context.TODO(), readpref.Primary())
 	if err != nil {
 		zap.S().Error()
 		return nil, err

@@ -38,7 +38,7 @@ func New(repo *mongorepository.MongoRepo) *DiagnoseService {
 
 func (d *DiagnoseService) StoreData(data interface{}, auth *auth.Token) (result interface{}, err error) {
 	var errGeneral = fmt.Errorf("failed to store new Diagnose")
-	var ctx = context.Background()
+	var ctx = context.TODO()
 	var session mongo.Session
 	var dataStore = &entities.Diagnose{}
 
@@ -200,7 +200,7 @@ func (d *DiagnoseService) StoreData(data interface{}, auth *auth.Token) (result 
 		result = resultStore
 		return nil
 	}); err != nil {
-		if abortErr := session.AbortTransaction(context.Background()); abortErr != nil {
+		if abortErr := session.AbortTransaction(context.TODO()); abortErr != nil {
 			zap.S().Error(err)
 			return nil, errGeneral
 		}

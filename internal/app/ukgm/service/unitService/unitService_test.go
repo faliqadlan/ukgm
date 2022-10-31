@@ -93,7 +93,7 @@ func TestTransactionCommit(t *testing.T) {
 
 	var client = repo.Client
 	var collection *mongo.Collection
-	var ctx = context.Background()
+	var ctx = context.TODO()
 	var id = primitive.NewObjectID()
 	var doc = bson.M{"_id": id, "hometown": "Atlanta 2", "year": int32(1998)}
 	var result *mongo.UpdateResult
@@ -158,7 +158,7 @@ func TestTransactionCommit(t *testing.T) {
 	})
 
 	if err != nil {
-		if abortErr := session.AbortTransaction(context.Background()); abortErr != nil {
+		if abortErr := session.AbortTransaction(context.TODO()); abortErr != nil {
 			panic(abortErr)
 		}
 		panic(err)

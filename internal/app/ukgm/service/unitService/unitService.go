@@ -33,7 +33,7 @@ func New(repo *mongorepository.MongoRepo) *UnitService {
 func (u *UnitService) StoreData(data interface{}, auth *auth.Token) (result interface{}, err error) {
 
 	errGeneral := fmt.Errorf("failed to store new unit")
-	var ctx = context.Background()
+	var ctx = context.TODO()
 	var session mongo.Session
 
 	var dataUnit = &entities.Unit{}
@@ -118,7 +118,7 @@ func (u *UnitService) StoreData(data interface{}, auth *auth.Token) (result inte
 
 		return nil
 	}); err != nil {
-		if abortErr := session.AbortTransaction(context.Background()); abortErr != nil {
+		if abortErr := session.AbortTransaction(context.TODO()); abortErr != nil {
 			zap.S().Error(err)
 			return nil, errGeneral
 		}
