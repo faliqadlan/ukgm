@@ -3,10 +3,11 @@ package entities
 import "firebase.google.com/go/auth"
 
 type User struct {
-	ID         interface{} `json:"id" bson:"_id,omitempty"`
-	UID        string      `json:"uid" bson:"uid,omitempty"`
-	DistrictID string      `json:"district_id" bson:"district_id,omitempty"`
-	Email      string      `json:"email" bson:"email,omitempty"`
+	ID           interface{}    `json:"id" bson:"_id,omitempty"`
+	UID          string         `json:"uid" bson:"uid,omitempty"`
+	DistrictID   string         `json:"district_id" bson:"district_id,omitempty"`
+	Email        string         `json:"email" bson:"email,omitempty"`
+	ListDistrict []DistrictList `json:"list_district" bson:"list_district,omitempty"`
 
 	// include
 	Timestamp
