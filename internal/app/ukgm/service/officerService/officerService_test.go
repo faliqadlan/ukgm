@@ -68,7 +68,7 @@ func TestInputOfficer(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	srv := New(repo)
+	srv := New(repo, )
 
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 

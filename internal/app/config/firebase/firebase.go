@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"path/filepath"
 	"ukgm/internal/app/config/env"
+	"ukgm/internal/app/ukgm/model/entities"
 
 	firebase "firebase.google.com/go"
 	"firebase.google.com/go/auth"
@@ -85,7 +86,7 @@ func (f *FirebaseApi) GenerateToken(uid string) string {
 	return token
 }
 
-func (f *FirebaseApi) EncodeToken( token string) (auth *auth.Token, err error) {
+func (f *FirebaseApi) EncodeToken(token string) (auth *auth.Token, err error) {
 	client, err := f.FirebaseApp.Auth(context.TODO())
 	if err != nil {
 		zap.S().Error(err)
@@ -166,4 +167,36 @@ func (f *FirebaseApi) SignInWithPassword(email, password string) (string, error)
 		return "", err
 	}
 	return respBody.IDToken, err
+}
+
+func (f *FirebaseApi) CreateUser(ctx context.Context, inputUser *entities.User) (u *auth.UserRecord, err error) {
+
+	user := (&auth.UserToCreate{}).Email(inputUser.Email).Password("ukgm123").DisplayName(inputUser.Name)
+
+	client, err := f.FirebaseApp.Auth(ctx)
+	if err != nil {
+		zap.S().Error(err)
+		return nil, fmt.Errorf("error getting auth client: %w", err)
+	}
+
+	u, err = client.CreateUser(ctx, user)
+	if err != nil {
+		return nil, fmt.Errorf("error creating user to firebase : %w", err)
+	}
+
+	return
+}
+
+func (f *FirebaseApi) DeleteUser(ctx context.Context, uid string) (err error) {
+	client, err := f.FirebaseApp.Auth(ctx)
+	if err != nil {
+		zap.S().Error(err)
+		return fmt.Errorf("error getting auth client: %w", err)
+	}
+
+	err = client.DeleteUser(ctx, uid)
+	if err != nil {
+		return fmt.Errorf("error deleteing user in firebase : %w", err)
+	}
+	return
 }

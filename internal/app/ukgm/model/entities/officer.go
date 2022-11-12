@@ -6,6 +6,7 @@ type Officer struct {
 	ID           interface{} `json:"id" bson:"_id,omitempty"`
 	DistrictID   string      `json:"district_id" bson:"district_id,omitempty"`
 	Name         string      `json:"name" bson:"name" part:"main" properties:"searchable"`
+	Email        string      `json:"email" bson:"email"`
 	Level        string      `json:"level" bson:"level"`
 	Profesion    string      `json:"profesion" bson:"profesion"`
 	DistrictName string      `json:"district_name" bson:"districtname"`

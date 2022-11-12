@@ -8,21 +8,29 @@ import (
 	"ukgm/internal/app/ukgm/model/entities"
 	mongorepository "ukgm/internal/app/ukgm/mongoRepository"
 	officer_repo "ukgm/internal/app/ukgm/mongoRepository/officerRepo"
+	user_repo "ukgm/internal/app/ukgm/mongoRepository/userRepo"
+
+	firebase_api "ukgm/internal/app/config/firebase"
 
 	"firebase.google.com/go/auth"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.uber.org/zap"
 )
 
 type OfficerService struct {
+	userRepo    *user_repo.UserRepo
 	OfficerRepo *officer_repo.Repo
+	firebaseApi *firebase_api.FirebaseApi
 }
 
-func New(repo *mongorepository.MongoRepo) *OfficerService {
+func New(repo *mongorepository.MongoRepo, firebaseApi *firebase_api.FirebaseApi) *OfficerService {
 	return &OfficerService{
 		OfficerRepo: &officer_repo.Repo{MongoRepo: repo},
+		userRepo:    &user_repo.UserRepo{MongoRepo: repo},
+		firebaseApi: firebaseApi,
 	}
 }
 
@@ -31,30 +39,58 @@ func (o *OfficerService) StoreData(data interface{}, auth *auth.Token) (result i
 	var ctx = context.TODO()
 
 	var dataOfficer = &entities.Officer{}
-
+	var session mongo.Session
 	dataOfficer, ok := data.(*entities.Officer)
 
 	if !ok {
 		return nil, errGeneral
 	}
 
-	if dataOfficer.DistrictID == "" {
-		dataOfficer.DistrictID = "kecamatan"
-		dataOfficer.Level = "kecamatan"
-	} else {
-		dataOfficer.Level = "kelurahan"
+	if session, err = o.OfficerRepo.Client.StartSession(); err != nil {
+		zap.S().Error(err)
+		return nil, err
 	}
+	defer session.EndSession(ctx)
 
-	dataOfficer.Timestamp.CreateNew(auth)
-
-	res, err := o.OfficerRepo.StoreData(dataOfficer, ctx)
-
-	if err != nil {
-		log.Println(err)
+	if err = session.StartTransaction(); err != nil {
 		zap.S().Error(err)
 		return nil, errGeneral
 	}
-	result = res
+
+	if err = mongo.WithSession(ctx, session, func(sc mongo.SessionContext) (err error) {
+
+		if dataOfficer.DistrictID == "" {
+			dataOfficer.DistrictID = "kecamatan"
+			dataOfficer.Level = "kecamatan"
+		} else {
+			dataOfficer.Level = "kelurahan"
+		}
+
+		dataOfficer.Timestamp.CreateNew(auth)
+
+		res, err := o.OfficerRepo.StoreData(dataOfficer, sc)
+		if err != nil {
+			log.Println(err)
+			zap.S().Error(err)
+			return errGeneral
+		}
+
+		userData := entities.User{}
+
+		userData.CreateNew(*auth, dataOfficer.DistrictID)
+
+		result = res
+		return
+	}); err != nil {
+		if abortErr := session.AbortTransaction(context.TODO()); abortErr != nil {
+			zap.S().Error(err)
+			return nil, errGeneral
+		}
+		zap.S().Error(err)
+		return nil, errGeneral
+	}
+
+	
 	return
 }
 

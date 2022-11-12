@@ -46,7 +46,7 @@ func main() {
 	r.Use(middlewareSrv.JWTMiddleware)
 	// r.Use(middlewareSrv)
 
-	newService, err := service.ServiceNewDeclare()
+	newService, err := service.ServiceNewDeclare(firebaseApi)
 	if err != nil {
 		log.Panic(err)
 	}

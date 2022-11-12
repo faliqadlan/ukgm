@@ -4,6 +4,8 @@ import "firebase.google.com/go/auth"
 
 type User struct {
 	ID           interface{}    `json:"id" bson:"_id,omitempty"`
+	Name         string         `json:"name" bson:"name"`
+	OfficerId    string         `json:"officer_id" bson:"officer_id"`
 	UID          string         `json:"uid" bson:"uid,omitempty"`
 	DistrictID   string         `json:"district_id" bson:"district_id,omitempty"`
 	Email        string         `json:"email" bson:"email,omitempty"`
@@ -27,4 +29,7 @@ func (u *User) CreateNew(userAuth auth.Token, disctrictID string) {
 	u.UID = userAuth.UID
 	u.DistrictID = disctrictID
 	u.Email = userAuth.Claims["email"].(string)
+	if u.DistrictID == "" {
+		
+	}
 }
