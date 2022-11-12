@@ -14,6 +14,8 @@ import (
 	unit_service "ukgm/internal/app/ukgm/service/unitService"
 	user_service "ukgm/internal/app/ukgm/service/userService"
 
+	firebase_api "ukgm/internal/app/config/firebase"
+
 	"go.uber.org/zap"
 )
 
@@ -34,7 +36,7 @@ type ServiceNew struct {
 	OfficerSrvGetList    GetListsrv
 }
 
-func ServiceNewDeclare() (result *ServiceNew, err error) {
+func ServiceNewDeclare(firebaseApi *firebase_api.FirebaseApi) (result *ServiceNew, err error) {
 	repo, err := MongoDeclare()
 	if err != nil {
 		zap.S().Error(err)
@@ -44,7 +46,7 @@ func ServiceNewDeclare() (result *ServiceNew, err error) {
 	result = &ServiceNew{
 		Repo: repo,
 	}
-	result.Init()
+	result.Init(firebaseApi)
 	return
 }
 
@@ -63,7 +65,7 @@ func MongoDeclare() (repo *mongorepository.MongoRepo, err error) {
 	return
 }
 
-func (s *ServiceNew) Init() {
+func (s *ServiceNew) Init(firebaseApi *firebase_api.FirebaseApi) {
 	s.DoctorService = doctor_service.New(s.Repo)
 	s.DistrictService = district_service.New(s.Repo)
 	s.UserServiceColl = user_service.New(s.Repo)
@@ -74,9 +76,9 @@ func (s *ServiceNew) Init() {
 	s.DiagnoseSrvStoreData = diagnose_service.New(s.Repo)
 	s.DiagnoseSrvGetDetail = diagnose_service.New(s.Repo)
 	s.DiagnoseSrvGetList = diagnose_service.New(s.Repo)
-	s.OfficerSrvStoreData = officer_service.New(s.Repo)
-	s.OfficerSrvSoftDelete = officer_service.New(s.Repo)
-	s.OfficerSrvGetList = officer_service.New(s.Repo)
+	s.OfficerSrvStoreData = officer_service.New(s.Repo, firebaseApi)
+	s.OfficerSrvSoftDelete = officer_service.New(s.Repo, firebaseApi)
+	s.OfficerSrvGetList = officer_service.New(s.Repo, firebaseApi)
 }
 
 func MongoDeclareForTesting() (repo *mongorepository.MongoRepo, err error) {

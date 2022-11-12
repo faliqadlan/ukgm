@@ -1,6 +1,7 @@
 package user_service
 
 import (
+	"context"
 	"errors"
 	"ukgm/internal/app/ukgm/model/entities"
 	mongorepository "ukgm/internal/app/ukgm/mongoRepository"
@@ -28,7 +29,7 @@ func (u *UserService) ShowUserByUid(uid string) (result *entities.User, err erro
 		"uid":                  uid,
 	}
 
-	result, err = u.Repo.ShowUser(filter, nil)
+	result, err = u.Repo.ShowUser(context.TODO(), filter, nil)
 	if err != nil {
 		zap.S().Error(err)
 		return nil, errors.New("error in show user")
