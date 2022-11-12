@@ -1,6 +1,13 @@
 package entities
 
-import "ukgm/internal/app/utils"
+import (
+	"log"
+	"ukgm/internal/app/config/env"
+	"ukgm/internal/app/ukgm"
+	"ukgm/internal/app/utils"
+
+	"firebase.google.com/go/auth"
+)
 
 type Officer struct {
 	ID           interface{} `json:"id" bson:"_id,omitempty"`
@@ -29,4 +36,43 @@ func (o *Officer) ToOfficerList() OfficerList {
 		Profesion:    o.Profesion,
 		DistrictName: o.DistrictName,
 	}
+}
+
+func (o *Officer) ToCreateUser(auth *auth.Token) (u User) {
+	u.Name = o.Name
+	u.OfficerId = utils.ObjectIDHex(o.ID)
+	u.Email = o.Email
+	u.DistrictID = o.DistrictID
+
+	if o.DistrictID == "kecamatan" {
+		distrctList := []DistrictList{}
+
+		for i := 0; i < len(ukgm.DistrictNameList); i++ {
+
+			var id string
+
+			switch {
+			case env.Get("DB_DATABASE") == "ukgm_dev":
+
+				id = ukgm.DistrictIdListDev[i]
+
+			case env.Get("DB_DATABASE") == "ukgm":
+				id = ukgm.DistrictIdListLive[i]
+			default:
+				log.Println("error get id")
+				return
+			}
+
+			distrctList = append(distrctList, DistrictList{
+				ID:   id,
+				Name: ukgm.DistrictNameList[i],
+			})
+		}
+
+		u.ListDistrict = distrctList
+	}
+
+	u.Timestamp.CreateNew(auth)
+
+	return
 }

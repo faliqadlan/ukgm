@@ -15,6 +15,7 @@ import (
 	"github.com/go-playground/assert"
 	"github.com/google/uuid"
 	"go.uber.org/zap"
+	firebase_api "ukgm/internal/app/config/firebase"
 )
 
 func MongoDeclareForTesting() (repo *mongorepository.MongoRepo, err error) {
@@ -68,7 +69,9 @@ func TestInputOfficer(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	srv := New(repo, )
+	firebaseApi := firebase_api.NewFirebaseApi()
+
+	srv := New(repo, firebaseApi)
 
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
@@ -138,7 +141,9 @@ func TestNurse(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	srv := New(repo)
+	firebaseApi := firebase_api.NewFirebaseApi()
+
+	srv := New(repo, firebaseApi)
 
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
@@ -195,7 +200,9 @@ func TestShowList(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	srv := New(repo)
+	firebaseApi := firebase_api.NewFirebaseApi()
+
+	srv := New(repo, firebaseApi)
 
 	t.Run("show list false", func(t *testing.T) {
 		res, err := srv.GetList("6319e9dcb0aa169ea947cf68", "nurse", "false")
@@ -230,7 +237,9 @@ func TestDoctor(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	srv := New(repo)
+	firebaseApi := firebase_api.NewFirebaseApi()
+
+	srv := New(repo, firebaseApi)
 
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 

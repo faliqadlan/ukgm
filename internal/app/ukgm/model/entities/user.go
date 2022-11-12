@@ -29,7 +29,4 @@ func (u *User) CreateNew(userAuth auth.Token, disctrictID string) {
 	u.UID = userAuth.UID
 	u.DistrictID = disctrictID
 	u.Email = userAuth.Claims["email"].(string)
-	if u.DistrictID == "" {
-		
-	}
 }

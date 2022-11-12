@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"ukgm/internal/app/ukgm/model/entities"
 	mongorepository "ukgm/internal/app/ukgm/mongoRepository"
 	officer_repo "ukgm/internal/app/ukgm/mongoRepository/officerRepo"
@@ -70,14 +69,29 @@ func (o *OfficerService) StoreData(data interface{}, auth *auth.Token) (result i
 
 		res, err := o.OfficerRepo.StoreData(dataOfficer, sc)
 		if err != nil {
-			log.Println(err)
+			zap.S().Error(err)
+			return errGeneral
+		}
+		userData := dataOfficer.ToCreateUser(auth)
+
+		userFb, err := o.firebaseApi.CreateUser(sc, &userData)
+		if err != nil {
 			zap.S().Error(err)
 			return errGeneral
 		}
 
-		userData := entities.User{}
+		userData.UID = userFb.UID
 
-		userData.CreateNew(*auth, dataOfficer.DistrictID)
+		_, err = o.userRepo.StoreData(sc, &userData)
+		if err != nil {
+			zap.S().Error(err)
+			return errGeneral
+		}
+
+		if err = session.CommitTransaction(sc); err != nil {
+			zap.S().Error(err)
+			return errGeneral
+		}
 
 		result = res
 		return
@@ -90,12 +104,12 @@ func (o *OfficerService) StoreData(data interface{}, auth *auth.Token) (result i
 		return nil, errGeneral
 	}
 
-	
 	return
 }
 
 func (o *OfficerService) SoftDelete(auth *auth.Token, input ...string) (err error) {
 	var errGeneral = fmt.Errorf("failed to delete officer")
+	var ctx = context.TODO()
 	officerId := input[0]
 
 	oID, err := primitive.ObjectIDFromHex(officerId)
