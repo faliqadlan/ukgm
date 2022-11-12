@@ -33,6 +33,7 @@ func (u *UserRepo) StoreData(ctx context.Context, data *entities.User) (result *
 }
 
 func (u *UserRepo) UpdateData(ctx context.Context, data *entities.User) (err error) {
+
 	update := *data
 	update.ID = nil
 

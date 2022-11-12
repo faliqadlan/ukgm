@@ -8,6 +8,7 @@ import (
 	mongorepository "ukgm/internal/app/ukgm/mongoRepository"
 	officer_repo "ukgm/internal/app/ukgm/mongoRepository/officerRepo"
 	user_repo "ukgm/internal/app/ukgm/mongoRepository/userRepo"
+	"ukgm/internal/app/utils"
 
 	firebase_api "ukgm/internal/app/config/firebase"
 
@@ -47,7 +48,7 @@ func (o *OfficerService) StoreData(data interface{}, auth *auth.Token) (result i
 
 	if session, err = o.OfficerRepo.Client.StartSession(); err != nil {
 		zap.S().Error(err)
-		return nil, err
+		return nil, errGeneral
 	}
 	defer session.EndSession(ctx)
 
@@ -110,6 +111,7 @@ func (o *OfficerService) StoreData(data interface{}, auth *auth.Token) (result i
 func (o *OfficerService) SoftDelete(auth *auth.Token, input ...string) (err error) {
 	var errGeneral = fmt.Errorf("failed to delete officer")
 	var ctx = context.TODO()
+	var session mongo.Session
 	officerId := input[0]
 
 	oID, err := primitive.ObjectIDFromHex(officerId)
@@ -118,21 +120,77 @@ func (o *OfficerService) SoftDelete(auth *auth.Token, input ...string) (err erro
 		return errors.New("failed to parse id")
 	}
 
-	filter := bson.M{
-		"timestamp.deleted_at": nil,
-		"_id":                  oID,
+	if session, err = o.OfficerRepo.Client.StartSession(); err != nil {
+		zap.S().Error(err)
+		return errGeneral
 	}
+	defer session.EndSession(ctx)
 
-	show, err := o.OfficerRepo.ShowData(filter, nil, context.TODO())
-	if err != nil {
+	if err = session.StartTransaction(); err != nil {
 		zap.S().Error(err)
 		return errGeneral
 	}
 
-	show.Timestamp.Delete(auth)
+	if err = mongo.WithSession(ctx, session, func(sc mongo.SessionContext) (err error) {
 
-	err = o.OfficerRepo.UpdateData(show, context.TODO())
-	if err != nil {
+		filter := bson.M{
+			"timestamp.deleted_at": nil,
+			"_id":                  oID,
+		}
+
+		show, err := o.OfficerRepo.ShowData(filter, nil, sc)
+		if err != nil {
+			zap.S().Error(err)
+			return errGeneral
+		}
+
+		show.Timestamp.Delete(auth)
+
+		err = o.OfficerRepo.UpdateData(show, sc)
+		if err != nil {
+			zap.S().Error(err)
+			return errGeneral
+		}
+
+		filter = bson.M{
+			"timestamp.deleted_at": nil,
+			"officer_id":           utils.ObjectIDHex(show.ID),
+		}
+
+		showUser, err := o.userRepo.ShowUser(sc, filter, nil)
+		if err != nil && err != mongo.ErrNoDocuments {
+			zap.S().Error(err)
+			return errGeneral
+
+		}
+
+		if showUser != nil {
+			showUser.Timestamp.Delete(auth)
+
+			err = o.userRepo.UpdateData(sc, showUser)
+			if err != nil && err != mongo.ErrNoDocuments {
+				zap.S().Error(err)
+				return errGeneral
+			}
+
+			err = o.firebaseApi.DeleteUser(sc, showUser.UID)
+			if err != nil {
+				zap.S().Error(err)
+				return errGeneral
+			}
+		}
+
+		if err = session.CommitTransaction(sc); err != nil {
+			zap.S().Error(err)
+			return errGeneral
+		}
+		return
+	}); err != nil {
+
+		if abortErr := session.AbortTransaction(context.TODO()); abortErr != nil {
+			zap.S().Error(err)
+			return errGeneral
+		}
 		zap.S().Error(err)
 		return errGeneral
 	}
