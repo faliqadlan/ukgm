@@ -42,7 +42,7 @@ func (p *Patient) ToPatientList() *PatientList {
 	}
 
 	if p.LastDiagnose != nil {
-		ldS = p.LastDiagnose.UpdatedAt.Local().Format(ukgm.TimeFormat)
+		ldS = p.LastDiagnose.CreatedAt.Local().Format(ukgm.TimeFormat)
 	}
 
 	if p.LastDiagnose != nil {
