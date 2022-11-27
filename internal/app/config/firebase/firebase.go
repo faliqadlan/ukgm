@@ -19,7 +19,7 @@ import (
 )
 
 const (
-	CredPath   = "./internal/pkg/token/firebase/ukgm-f77a7-firebase-adminsdk-s2wqn-9226607831.json"
+	CredPath   = "./internal/pkg/token/firebase/token.json"
 	PubKeyPath = "./internal/pkg/token/other/pubKey.json"
 
 	verifyCustomTokenURL = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyCustomToken?key=%s"
@@ -38,7 +38,7 @@ func NewFirebaseApi() *FirebaseApi {
 
 func SetupFirebase() *firebase.App {
 
-	serviceAccountKeyFilePath, err := filepath.Abs("./internal/pkg/token/firebase/ukgm-f77a7-firebase-adminsdk-s2wqn-9226607831.json")
+	serviceAccountKeyFilePath, err := filepath.Abs(CredPath)
 	if err != nil {
 		panic("Unable to load serviceAccountKeys.json file")
 	}
