@@ -178,3 +178,41 @@ func (d *DiagnoseRepo) GetList(input ...string) (result interface{}, err error) 
 
 	return
 }
+
+func (d *DiagnoseRepo) GetRecordDiagnose(input ...string) (result []entities.DiagnoseRecord, err error) {
+
+	patientID := input[1]
+
+	filter := bson.M{
+		"patient_id":           patientID,
+		"timestamp.deleted_at": nil,
+	}
+
+	findOptions := options.Find()
+	findOptions.SetSort(bson.D{{Key: "timestamp.created_at", Value: -1}})
+
+	cursor, err := d.Find(context.TODO(), DiagnoseCollection, filter, findOptions)
+	if err != nil {
+		return nil, err
+	}
+
+	var diagnoseRecordArr []entities.DiagnoseRecord
+
+	for cursor.Next(context.TODO()) {
+		diagnose := entities.Diagnose{}
+		if err := cursor.Decode(&diagnose); err != nil {
+			return nil, err
+		}
+
+		diagnoseRecord := entities.DiagnoseRecord{}
+
+		diagnoseRecord.Date = diagnose.Timestamp.CreatedAt.Format("2006-01")
+		diagnoseRecord.Diagnose = diagnose
+
+		diagnoseRecordArr = append(diagnoseRecordArr, diagnoseRecord)
+	}
+	result = diagnoseRecordArr
+
+
+	return
+}

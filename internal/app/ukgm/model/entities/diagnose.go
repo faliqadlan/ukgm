@@ -38,3 +38,8 @@ type DiagnoseProgress struct {
 	Date string `json:"date"`
 	ConditionOverview
 }
+
+type DiagnoseRecord struct {
+	Date     string   `json:"date"`
+	Diagnose Diagnose `json:"diagnose"`
+}
