@@ -91,3 +91,15 @@ func (d *DiagnoseApi) GetList(w http.ResponseWriter, r *http.Request) {
 	}
 	responses.SendJSON(responses.NewResponse(res), w)
 }
+
+func (d *DiagnoseApi) GetRecord(w http.ResponseWriter, r *http.Request) {
+	patientId := r.URL.Query().Get("patient_id")
+
+	res, err := d.srv.DiagnoseSrvGetList.GetList("record", patientId)
+	if err != nil {
+		zap.S().Error(err)
+		responses.SendErrorJSON(responses.PrintErrorMessage(err), w)
+		return
+	}
+	responses.SendJSON(responses.NewResponse(res), w)
+}

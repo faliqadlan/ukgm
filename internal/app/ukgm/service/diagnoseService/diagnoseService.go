@@ -69,7 +69,7 @@ func (d *DiagnoseService) StoreData(data interface{}, auth *auth.Token) (result 
 		},
 	}
 	resAvailable, errAvailable := d.DiagnoseRepo.ShowData(filter, nil, ctx)
-	zap.S().Error(errAvailable)
+	
 	if errAvailable == nil {
 		if !replace {
 			return nil, fmt.Errorf("this patient have diagnose data for %v created at %v, are you sure to replace it ?", resAvailable.Timestamp.CreatedAt.Month().String(), resAvailable.Timestamp.CreatedAt.Format("2006-01-02"))
@@ -234,5 +234,10 @@ func (d *DiagnoseService) GetDetail(input ...string) (result interface{}, err er
 }
 
 func (d *DiagnoseService) GetList(input ...string) (result interface{}, err error) {
+
+	if input[0] == "record" {
+		return d.DiagnoseRepo.GetRecordDiagnose(input...)
+	}
+
 	return d.DiagnoseRepo.GetList(input...)
 }
