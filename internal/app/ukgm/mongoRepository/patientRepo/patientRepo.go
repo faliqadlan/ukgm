@@ -43,7 +43,7 @@ func (p *PatientRepo) GenerateMRNumber(ctx context.Context) (result string, err 
 	total, err := p.Count(ctx, PatientCollection, bson.M{
 		"timestamp.created_at": bson.M{
 			"$gte": primitive.NewDateTimeFromTime(utils.StartOfDay(time.Now().In(location).Local())),
-			"$lte":  primitive.NewDateTimeFromTime(utils.EndOfDay(time.Now().In(location).Local())),
+			"$lte": primitive.NewDateTimeFromTime(utils.EndOfDay(time.Now().In(location).Local())),
 		},
 	})
 
@@ -128,6 +128,35 @@ func (p *PatientRepo) UpdatePatient(data *entities.Patient, ctx context.Context)
 	if err != nil {
 		zap.S().Error(err)
 		return
+	}
+	return
+}
+
+func (p *PatientRepo) TotalPatients(ctx context.Context, filter bson.M) (res *int, err error) {
+
+	count, err := p.Count(ctx, PatientCollection, filter)
+	res = &count
+	if err != nil {
+		return nil, err
+	}
+
+	return
+}
+
+func (p *PatientRepo) FetchPatientList(ctx context.Context, filter bson.M, opt *options.FindOptions) (result []entities.Patient, err error) {
+
+	getCursor, err := p.Find(ctx, PatientCollection, filter, opt)
+	if err != nil {
+		zap.S().Error(err)
+		return
+	}
+	for getCursor.Next(ctx) {
+		var elem entities.Patient
+		if err = getCursor.Decode(&elem); err != nil {
+			zap.S().Error(err)
+			return
+		}
+		result = append(result, elem)
 	}
 	return
 }
