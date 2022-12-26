@@ -70,6 +70,35 @@ func (u *UnitRepo) FecthUnitList(filter bson.M, opt *options.FindOptions, ctx co
 	return result, nil
 }
 
+func (u *UnitRepo) FecthUnitDistrictList(ctx context.Context, filter bson.M, opt *options.FindOptions) (result []entities.UnitDistrict, err error) {
+	if opt == nil {
+		opt = &options.FindOptions{}
+	}
+
+	cursor, err := u.Find(ctx, UnitCollection, filter, opt)
+	if err != nil {
+		zap.S().Error(err)
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	for cursor.Next(ctx) {
+		unit := entities.Unit{}
+
+		if err = cursor.Decode(&unit); err != nil {
+			zap.S().Error(err)
+			return nil, err
+		}
+		unitDistrict := entities.UnitDistrict{
+			ID:         utils.ObjectIDHex(unit.ID),
+			DistrictID: unit.DistrictID,
+			Name:       unit.Name,
+		}
+		result = append(result, unitDistrict)
+	}
+	return result, nil
+}
+
 func (u *UnitRepo) UpdateUnit(data *entities.Unit, ctx context.Context) (err error) {
 	update := *data
 	update.ID = nil

@@ -23,7 +23,7 @@ type (
 	DistrictResponse struct {
 		ID                interface{}     `json:"_id"`
 		Name              string          `json:"name"`
-		Units             []*UnitDistrict `json:"units"`
+		Units             []UnitDistrict `json:"units"`
 		ConditionOverview `json:"condition_overview"`
 
 		// include
@@ -31,10 +31,10 @@ type (
 	}
 
 	UnitDistrict struct {
-		ID            interface{} `json:"id" bson:"_id,omitempty"`
-		DistrictID    string      `json:"district_id" bson:"district_id,omitempty"`
-		Name          string      `json:"name" bson:"name"`
-		TotalPatients int         `json:"total_patient" bson:"total_patient"`
+		ID            string `json:"id" bson:"_id,omitempty"`
+		DistrictID    string `json:"district_id" bson:"district_id,omitempty"`
+		Name          string `json:"name" bson:"name"`
+		TotalPatients int    `json:"total_patient" bson:"total_patient"`
 	}
 
 	ConditionOverview struct {
@@ -50,4 +50,13 @@ func (d *District) ToDistrictList() *DistrictList {
 		ID:   utils.ObjectIDHex(d.ID),
 		Name: d.Name,
 	}
+}
+
+func (d *District) ToDistrictResponse() *DistrictResponse {
+	res := &DistrictResponse{}
+	res.ID = utils.ObjectIDHex(d.ID)
+	res.Name = d.Name
+
+	res.Timestamp = d.Timestamp
+	return res
 }
