@@ -1,7 +1,6 @@
 package entities
 
 import (
-	"ukgm/internal/app/ukgm"
 	"ukgm/internal/app/utils"
 )
 
@@ -9,7 +8,6 @@ type (
 	District struct {
 		ID     interface{}        `json:"id" bson:"_id,omitempty"`
 		Name   string             `json:"name" bson:"name"`
-		Units  map[string]*Unit   `json:"units" bson:"units"`
 		Doctor map[string]*Doctor `json:"Doctor" bson:"Doctor"`
 		Nurse  map[string]*Nurse  `json:"Nurse" bson:"Nurse"`
 
@@ -52,51 +50,4 @@ func (d *District) ToDistrictList() *DistrictList {
 		ID:   utils.ObjectIDHex(d.ID),
 		Name: d.Name,
 	}
-}
-
-func (d *District) ToDistrictResponse() *DistrictResponse {
-	res := &DistrictResponse{}
-	res.ID = utils.ObjectIDHex(d.ID)
-	res.Name = d.Name
-
-	if d.Units != nil {
-		for _, v := range d.Units {
-
-			unitDistrict := &UnitDistrict{}
-			var countPat int
-			if v.Patients != nil {
-				for _, pat := range v.Patients {
-					if pat != nil {
-						countPat++
-						if pat.LastDiagnose != nil {
-
-							switch pat.LastDiagnose.Condition {
-							case ukgm.KondisiBaik:
-								res.ConditionOverview.Baik += 1
-							case ukgm.KondisiCukupBaik:
-								res.ConditionOverview.CukupBaik += 1
-							case ukgm.KondisiKurangBaik:
-								res.ConditionOverview.KurangBaik += 1
-							case ukgm.KondisiBuruk:
-								res.ConditionOverview.Buruk += 1
-							}
-
-						}
-					}
-				}
-			}
-
-			unitDistrict.ID = v.ID
-			unitDistrict.Name = v.Name
-			unitDistrict.DistrictID = v.DistrictID
-			unitDistrict.TotalPatients = countPat
-			if v != nil {
-				res.Units = append(res.Units, unitDistrict)
-			}
-
-		}
-	}
-
-	res.Timestamp = d.Timestamp
-	return res
 }

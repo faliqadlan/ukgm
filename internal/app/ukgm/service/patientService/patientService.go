@@ -9,7 +9,6 @@ import (
 	districtrepo "ukgm/internal/app/ukgm/mongoRepository/districtRepo"
 	patient_repo "ukgm/internal/app/ukgm/mongoRepository/patientRepo"
 	unit_repo "ukgm/internal/app/ukgm/mongoRepository/unitRepo"
-	"ukgm/internal/app/utils"
 
 	"firebase.google.com/go/auth"
 	"go.mongodb.org/mongo-driver/bson"
@@ -88,12 +87,6 @@ func (p *PatientService) StoreData(data interface{}, auth *auth.Token) (result i
 			"_id":                  districtId,
 		}
 
-		district, err := p.DistrictRepo.ShowDistrict(filter, nil, context.TODO())
-		if err != nil {
-			zap.S().Error(err)
-			return errGeneral
-		}
-
 		unitId, err := primitive.ObjectIDFromHex(dataPat.UnitID)
 		if err != nil {
 			zap.S().Error(err)
@@ -118,30 +111,6 @@ func (p *PatientService) StoreData(data interface{}, auth *auth.Token) (result i
 			return errGeneral
 		}
 
-		mapPatient := make(map[string]*entities.Patient)
-		mapPatient[utils.ObjectIDHex(resultPat.ID)] = resultPat
-
-		if unit.Patients == nil {
-			unit.Patients = mapPatient
-		} else {
-			unit.Patients[utils.ObjectIDHex(resultPat.ID)] = resultPat
-		}
-
-		if err = p.UnitRepo.UpdateUnit(unit, sc); err != nil {
-			zap.S().Error(err)
-			return errGeneral
-		}
-
-		if district.Units[resultPat.UnitID].Patients == nil {
-			district.Units[resultPat.UnitID].Patients = mapPatient
-		} else {
-			district.Units[resultPat.UnitID].Patients[utils.ObjectIDHex(resultPat.ID)] = resultPat
-		}
-
-		if err = p.DistrictRepo.UpdateDistrict(district, sc); err != nil {
-			zap.S().Error(err)
-			return errGeneral
-		}
 
 		// for test session error
 		// err = p.DistrictRepo.UpdateDistrict(district, sc)

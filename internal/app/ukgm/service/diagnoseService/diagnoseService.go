@@ -69,7 +69,7 @@ func (d *DiagnoseService) StoreData(data interface{}, auth *auth.Token) (result 
 		},
 	}
 	resAvailable, errAvailable := d.DiagnoseRepo.ShowData(filter, nil, ctx)
-	
+
 	if errAvailable == nil {
 		if !replace {
 			return nil, fmt.Errorf("this patient have diagnose data for %v created at %v, are you sure to replace it ?", resAvailable.Timestamp.CreatedAt.Month().String(), resAvailable.Timestamp.CreatedAt.Format("2006-01-02"))
@@ -123,12 +123,6 @@ func (d *DiagnoseService) StoreData(data interface{}, auth *auth.Token) (result 
 			"_id":                  unitId,
 		}
 
-		unit, err := d.UnitRepo.ShowUnit(filter, nil, context.TODO())
-		if err != nil {
-			zap.S().Error(err)
-			return errGeneral
-		}
-
 		patientId, err := primitive.ObjectIDFromHex(dataStore.PatientID)
 		if err != nil {
 			zap.S().Error(err)
@@ -169,18 +163,6 @@ func (d *DiagnoseService) StoreData(data interface{}, auth *auth.Token) (result 
 		patient.LastDiagnose = dataStore
 
 		if err = d.PatientRepo.UpdatePatient(patient, sc); err != nil {
-			zap.S().Error(err)
-			return errGeneral
-		}
-
-		unit.Patients[resultStore.PatientID].LastDiagnose = resultStore
-		if err = d.UnitRepo.UpdateUnit(unit, sc); err != nil {
-			zap.S().Error(err)
-			return errGeneral
-		}
-
-		district.Units[resultStore.UnitID].Patients[resultStore.PatientID].LastDiagnose = resultStore
-		if err = d.DistrictRepo.UpdateDistrict(district, sc); err != nil {
 			zap.S().Error(err)
 			return errGeneral
 		}
