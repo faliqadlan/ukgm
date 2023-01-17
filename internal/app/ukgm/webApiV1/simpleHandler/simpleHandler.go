@@ -37,7 +37,6 @@ func (SimpeApi *SimpleApi) simpleHello(w http.ResponseWriter, r *http.Request) {
 
 func MaintainHelloOnLogin() {
 	url := "https://ukgm-faliqadlan.cloud.okteto.net/api/test"
-	url = "http://localhost:8001/api/test"
 
 	// init request
 	req, err := http.NewRequest(http.MethodGet, url, nil)
