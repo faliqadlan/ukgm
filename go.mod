@@ -8,6 +8,7 @@ require (
 	firebase.google.com/go v3.13.0+incompatible
 	github.com/go-chi/chi v1.5.4
 	github.com/go-chi/cors v1.2.1
+	github.com/go-co-op/gocron v1.18.0 // indirect
 	github.com/go-errors/errors v1.4.2 // indirect
 	github.com/go-playground/assert v1.2.1
 	github.com/go-playground/assert/v2 v2.2.0
@@ -16,7 +17,7 @@ require (
 	github.com/jinzhu/now v1.1.5
 	github.com/joho/godotenv v1.4.0
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
-	github.com/stretchr/testify v1.8.0
+	github.com/stretchr/testify v1.8.1
 	go.mongodb.org/mongo-driver v1.10.1
 	go.uber.org/zap v1.20.0
 	google.golang.org/api v0.94.0

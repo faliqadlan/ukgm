@@ -2,12 +2,15 @@ package simple
 
 import (
 	"errors"
+	"io/ioutil"
 	"log"
 	"net/http"
+	"time"
 	"ukgm/internal/app/ukgm/model/request"
 	responses "ukgm/internal/app/ukgm/model/response"
 
 	"firebase.google.com/go/auth"
+	"github.com/go-co-op/gocron"
 	"go.uber.org/zap"
 )
 
@@ -32,6 +35,37 @@ func (SimpeApi *SimpleApi) simpleHello(w http.ResponseWriter, r *http.Request) {
 	responses.SendJSON(responses.NewResponse("Welcome to the simpleHello"), w)
 }
 
-// func ()  {
-	
-// }
+func MaintainHelloOnLogin() {
+	url := "https://ukgm-faliqadlan.cloud.okteto.net/api/test"
+	url = "http://localhost:8001/api/test"
+
+	// init request
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		zap.S().Error(err)
+	}
+
+	// EXECUTE REQUEST
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		zap.S().Error(err)
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		zap.S().Error(err)
+	}
+
+	log.Println(string(body))
+}
+
+func CronMaintainHelloOnLogin() {
+	s := gocron.NewScheduler(time.UTC)
+
+	s.Every(12).Hours().Do(func() {
+		MaintainHelloOnLogin()
+	})
+
+	s.StartAsync()
+}
