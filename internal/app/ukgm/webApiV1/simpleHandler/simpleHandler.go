@@ -31,3 +31,7 @@ func (SimpeApi *SimpleApi) simpleHello(w http.ResponseWriter, r *http.Request) {
 
 	responses.SendJSON(responses.NewResponse("Welcome to the simpleHello"), w)
 }
+
+// func ()  {
+	
+// }

@@ -1,4 +1,4 @@
-FROM golang
+FROM golang:1.18
 
 ##buat folder APP
 RUN mkdir /app
