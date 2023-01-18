@@ -18,8 +18,6 @@ func (SimpeApi *SimpleApi) simpleHello(w http.ResponseWriter, r *http.Request) {
 	// GET DATA CONTEXT MIDDLEWARE
 	auth := r.Context().Value(request.GetAuthCtxKey()).(*auth.Token)
 
-	log.Println(auth)
-
 	query := r.URL.Query()
 	errorTest := query.Get("error")
 
@@ -30,7 +28,9 @@ func (SimpeApi *SimpleApi) simpleHello(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// log.Println(authTo)
+	loc, _ := time.LoadLocation("Asia/Jakarta")
+
+	log.Println("simpleHello", time.Now().In(loc), auth)
 
 	responses.SendJSON(responses.NewResponse("Welcome to the simpleHello"), w)
 }
