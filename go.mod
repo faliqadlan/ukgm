@@ -8,7 +8,7 @@ require (
 	firebase.google.com/go v3.13.0+incompatible
 	github.com/go-chi/chi v1.5.4
 	github.com/go-chi/cors v1.2.1
-	github.com/go-co-op/gocron v1.18.0 // indirect
+	github.com/go-co-op/gocron v1.18.0
 	github.com/go-errors/errors v1.4.2 // indirect
 	github.com/go-playground/assert v1.2.1
 	github.com/go-playground/assert/v2 v2.2.0

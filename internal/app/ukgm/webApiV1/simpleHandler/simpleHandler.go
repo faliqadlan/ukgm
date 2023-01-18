@@ -56,13 +56,13 @@ func MaintainHelloOnLogin() {
 		zap.S().Error(err)
 	}
 
-	log.Println(string(body))
+	log.Println(string(body), time.Now().Local())
 }
 
 func CronMaintainHelloOnLogin() {
 	s := gocron.NewScheduler(time.UTC)
 
-	s.Every(12).Hours().Do(func() {
+	s.Every("1h").Do(func() {
 		MaintainHelloOnLogin()
 	})
 
