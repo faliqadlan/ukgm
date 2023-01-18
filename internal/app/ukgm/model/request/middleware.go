@@ -63,12 +63,14 @@ func (m *Middleware) JWTMiddleware(next http.Handler) http.Handler {
 		if err != nil {
 			zap.S().Error(err)
 			responses.SendErrorJSON(responses.PrintErrorMessage(errors.New("token is invalid")), w)
+			return
 		}
 
 		authToken, err = m.firebaseApi.EncodeToken(tokenID)
 		if err != nil {
 			zap.S().Error(err)
 			responses.SendErrorJSON(responses.PrintErrorMessage(errors.New("token is invalid")), w)
+			return
 		}
 
 		ctx := context.WithValue(r.Context(), GetAuthCtxKey(), authToken)

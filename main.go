@@ -15,7 +15,6 @@ import (
 	"ukgm/internal/app/ukgm/service"
 	webapiv1 "ukgm/internal/app/ukgm/webApiV1"
 	login_handler "ukgm/internal/app/ukgm/webApiV1/loginHandler"
-	simple "ukgm/internal/app/ukgm/webApiV1/simpleHandler"
 	"ukgm/internal/pkg/server"
 
 	"github.com/go-chi/chi"
@@ -66,8 +65,6 @@ func main() {
 		Gracefully stop application
 		reference : https://medium.com/@kpbird/golang-gracefully-stop-application-23c2390bb212
 	*/
-
-	simple.CronMaintainHelloOnLogin()
 
 	s := server.New(&http.Server{
 		Addr:    appHost,
