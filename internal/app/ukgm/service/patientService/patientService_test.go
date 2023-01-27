@@ -1,6 +1,7 @@
 package patient_service
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/url"
@@ -15,6 +16,8 @@ import (
 
 	"firebase.google.com/go/auth"
 	"github.com/go-playground/assert"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.uber.org/zap"
 )
 
@@ -112,5 +115,67 @@ func TestFetchIndexPatient(t *testing.T) {
 		t.Log(count)
 		t.Log(res)
 
+	})
+}
+
+func TestUpdatePatient(t *testing.T) {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+	repo, err := MongoDeclareForTesting()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	srv := New(repo)
+
+	t.Run("success", func(t *testing.T) {
+
+		oid, err := primitive.ObjectIDFromHex("634eb49f4e6e17cd1dcc5836")
+		if err != nil {
+			t.Error(err)
+		}
+
+		filter := bson.M{
+			"timestamp.deleted_at": nil,
+			"_id":                  oid,
+		}
+
+		data, err := srv.PatientRepo.Showpatient(filter, nil, context.TODO())
+		if err != nil {
+			t.Error(err)
+		}
+
+		req := &entities.PatientUpdateRequest{
+			Name:   data.Name,
+			Gender: data.Gender,
+			NoHp:   data.NoHp,
+			Dob:    "1999-05-05",
+		}
+
+		res, err := srv.UpdateData(req, &auth.Token{}, "634eb49f4e6e17cd1dcc5836")
+		if err != nil {
+			t.Error(err)
+		}
+
+		t.Log(res)
+	})
+}
+
+func TestDeledePatient(t *testing.T) {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+	repo, err := MongoDeclareForTesting()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	srv := New(repo)
+
+	t.Run("success", func(t *testing.T) {
+		patientId := "63be1768ede33d6221da5afe"
+
+		err := srv.SoftDelete(&auth.Token{}, patientId)
+
+		if err != nil {
+			t.Log(err)
+		}
 	})
 }

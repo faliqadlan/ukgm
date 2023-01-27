@@ -54,6 +54,25 @@ func (d *DiagnoseRepo) ShowData(filter bson.M, options *options.FindOneOptions, 
 	return result, nil
 }
 
+func (d *DiagnoseRepo) FetchDiagnoseList(ctx context.Context, filter bson.M, opt *options.FindOptions) (result []entities.Diagnose, err error) {
+
+	getCursor, err := d.Find(ctx, DiagnoseCollection, filter, opt)
+	if err != nil {
+		zap.S().Error(err)
+		return
+	}
+	for getCursor.Next(ctx) {
+		var elem entities.Diagnose
+		if err = getCursor.Decode(&elem); err != nil {
+			zap.S().Error(err)
+			return
+		}
+		result = append(result, elem)
+	}
+
+	return
+}
+
 func (d *DiagnoseRepo) UpdateData(data *entities.Diagnose, ctx context.Context) (err error) {
 	update := *data
 	update.ID = nil
@@ -212,7 +231,6 @@ func (d *DiagnoseRepo) GetRecordDiagnose(input ...string) (result []entities.Dia
 		diagnoseRecordArr = append(diagnoseRecordArr, diagnoseRecord)
 	}
 	result = diagnoseRecordArr
-
 
 	return
 }

@@ -28,6 +28,8 @@ type ServiceNew struct {
 	UnitSrvGetList       GetListsrv
 	PatientSrvStoreData  StoreDataSrv
 	PatientSrvFetchIndex FetchIndexSrv
+	PatientSrvUpdateData UpdateDataSrv
+	PatientSrvSoftDelete DeleteDataSrv
 	DiagnoseSrvStoreData StoreDataSrv
 	DiagnoseSrvGetDetail GetDetailSrv
 	DiagnoseSrvGetList   GetListsrv
@@ -73,6 +75,8 @@ func (s *ServiceNew) Init(firebaseApi *firebase_api.FirebaseApi) {
 	s.UnitSrvGetList = unit_service.New(s.Repo)
 	s.PatientSrvStoreData = patient_service.New(s.Repo)
 	s.PatientSrvFetchIndex = patient_service.New(s.Repo)
+	s.PatientSrvUpdateData = patient_service.New(s.Repo)
+	s.PatientSrvSoftDelete = patient_service.New(s.Repo)
 	s.DiagnoseSrvStoreData = diagnose_service.New(s.Repo)
 	s.DiagnoseSrvGetDetail = diagnose_service.New(s.Repo)
 	s.DiagnoseSrvGetList = diagnose_service.New(s.Repo)
