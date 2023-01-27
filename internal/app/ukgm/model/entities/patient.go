@@ -1,9 +1,13 @@
 package entities
 
 import (
+	"fmt"
 	"time"
 	"ukgm/internal/app/ukgm"
 	"ukgm/internal/app/utils"
+
+	"github.com/iman231/go-help"
+	"go.uber.org/zap"
 )
 
 type Patient struct {
@@ -70,4 +74,39 @@ func (p *Patient) GetSearchableField() (result []string) {
 		result = []string{}
 	}
 	return
+}
+
+type PatientUpdateRequest struct {
+	Name   string `json:"name"`
+	Dob    string `json:"dob"`
+	Gender string `json:"gender"`
+	NoHp   string `json:"no_hp"`
+}
+
+func (p *PatientUpdateRequest) ToEntity() (*Patient, error) {
+	loc, err := time.LoadLocation("Asia/Jakarta")
+	if err != nil {
+		zap.S().Error(err)
+		return nil, err
+	}
+
+	dob, err := time.Parse("2006-01-02", p.Dob)
+	if err != nil {
+		zap.S().Error(err)
+		return nil, fmt.Errorf("invalid time format")
+	}
+	dob = dob.Local().In(loc)
+
+	if !help.InArray(p.Gender, []string{"P", "L"}) {
+		zap.S().Error(err)
+		return nil, fmt.Errorf("invalid gender input")
+	}
+
+	return &Patient{
+		Name:   p.Name,
+		Dob:    &dob,
+		Gender: p.Gender,
+		NoHp:   p.NoHp,
+	}, nil
+
 }
