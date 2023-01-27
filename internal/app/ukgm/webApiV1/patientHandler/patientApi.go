@@ -22,4 +22,8 @@ func NewPatientApi(srv *service.ServiceNew) *PatientApi {
 func (p *PatientApi) Init(r chi.Router) {
 	r.With(request.PageRequestNewCtx).Get("/", p.FetchIndex)
 	r.Post("/", p.StoreData)
+	r.Route("/{patient_id}", func(r chi.Router) {
+		r.Put("/", p.UpdateData)
+		r.Delete("/", p.DeleteData)
+	})
 }
